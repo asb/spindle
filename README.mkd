@@ -1,0 +1,29 @@
+# spindle - a tool to help spin distribution images
+
+## Temporary description
+For now this is very brief. More detailed documentation is forthcoming.
+
+I've been using this tool to generate Debian wheezy images for the Raspberry
+Pi, with the aim of producing reproducible, unbooted, clean setups that 
+require no manual intervention. Primarily I use qemu to do this.
+
+It's not massively user friendly yet, but hopefully that should soon change 
+(and of course, patches are welcome).
+
+## Current scripts
+* `setup_spindle_environment`: Sets up an schroot using wheezy and installs 
+the pre-requisites needed for spindle (mainly qemu, as it turns out I haven't 
+used augeas). If you don't use this, please make sure you have at least qemu 
+1.0.1
+* `wheezy-stage0`: Create and partition an SD card image, perform the initial 
+debootstrap on the host and copy the files to the SD image.
+* `wheezy-stage1`: Complete second stage of debootstrap under qemu after first 
+setting up a squashfs filesyste derived from Rob Landley's excellent 
+Aboriginal Linux. Setup dropbear.
+* `wheezy-stage2`: Add in Raspberry Pi 'firmware' and do misc config (e.g.  
+fstab, network interfaces, hostname). The resulting image is bootable.
+* `wheezy-stage3`: Install and configure a whole bunch of packages. More work 
+to be done here
+
+## Getting started
+TODO

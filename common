@@ -1,0 +1,109 @@
+#!/bin/sh
+# Part of spindle http://asbradbury.org/projects/spindle
+#
+# See LICENSE file for copyright and license details
+
+set -e
+
+run_qemu() {
+  rm fifo.out fifo.in || true
+  mkfifo fifo.out fifo.in
+  qemu-system-arm -M versatilepb -cpu arm1136-r2 -m 256 -nographic -no-reboot \
+        -kernel zImage -hda qemu_rootfs.sqf -drive file=$1,index=1,media=disk,cache=unsafe \
+        -append "root=/dev/sda rw init=/sbin/init.sh panic=1 PATH=/bin:/sbin console=ttyAMA0 HOST=armv6l"\
+        -net nic,model=rtl8139 -net user -redir tcp:22000::22 -daemonize -serial pipe:fifo \
+        -pidfile qemu.pid
+}
+
+ssh_in_to_qemu() {
+  ssh -i qemu_arm_key -p 22000 -lroot localhost "$@"
+}
+
+onvm_chroot() {
+  ssh_in_to_qemu chroot /mnt "$@"
+}
+
+shutdown_qemu() {
+  echo "sync" > fifo.in
+  echo "umount /mnt" > fifo.in
+  echo "exit" > fifo.in
+  if [ -e qemu.pid ]; then
+    QEMU_PID=$(cat qemu.pid)
+    while [ -n "$QEMU_PID" ]; do 
+      set +e
+      kill -0 $QEMU_PID 2>/dev/null
+      if [ $? -eq 0 ]; then
+        printf "Qemu pid %s not finished yet. Waiting\n" "$QEMU_PID"
+        sleep 1
+      else
+        QEMU_PID=""
+      fi
+      set -e
+    done
+  fi
+  rm fifo.in
+  rm fifo.out
+#  sleep 15
+}
+
+attach_image_to_nbd() {
+  # use -v as we seem to have problems otherwise...
+  sudo qemu-nbd --nocache -v -c $2 $1 &
+  sleep 5
+}
+
+detach_image_from_nbd() {
+  sudo qemu-nbd -d $1
+}
+
+inspect_image() {
+  cd work
+  qemu-img create -f qed -b ../$1 temp.qed
+  # Sigh http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
+  trap '[ -p fifo.in ] && shutdown_qemu' EXIT
+  trap '[ -p fifo.in ] && shutdown_qemu; trap - INT; kill -INT $$' INT
+  run_qemu temp.qed
+  ssh_in_to_qemu # -t chroot /mnt bash -l
+  shutdown_qemu
+  cd $OLDPWD
+}
+
+branch_image() {
+  qemu-img create -f qed -b $1 $2
+}
+
+write_image() {
+  attach_image_to_nbd $1 /dev/nbd0
+  sudo dd if=/dev/nbd0 of=$2 bs=4M || true
+  detach_image_from_nbd /dev/nbd0
+}
+
+convert_image() {
+  qemu-img convert -f qed -O raw $1 $2
+}
+
+disable_starting_services() {
+  ssh_in_to_qemu chroot /mnt sh -ex - <<EOF
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+printf '#!/bin/sh\nexit 101\n' > /usr/sbin/policy-rc.d
+chmod 755 /usr/sbin/policy-rc.d
+EOF
+}
+
+allow_starting_services() {
+  ssh_in_to_qemu chroot /mnt sh -ex - <<EOF
+rm /usr/sbin/policy-rc.d
+EOF
+}
+
+die() {
+  FMTSTR=$1
+  shift
+  printf "Died: $FMTSTR\n" "$@" >&2
+  exit 1
+}
+
+if [ $# -ne 0 ]; then
+  set -x
+  "$@"
+fi

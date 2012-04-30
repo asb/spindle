@@ -1,0 +1,191 @@
+#!/bin/sh
+# Part of spindle http://asbradbury.org/projects/spindle
+#
+# See LICENSE file for copyright and license details
+
+set -ex
+
+WORKDIR=work
+OUTDIR=out
+CURIMG=stage3.qed
+
+. ./common
+
+FINISHED_SUCCESSFULLY=0
+CLEANED_UP=0
+
+cleanup_atexit() {
+  set +e
+  if [ $CLEANED_UP -ne 1 ]; then
+    printf "Initiating cleanup\n"
+    [ -p fifo.in ] && shutdown_qemu
+  fi
+  CLEANED_UP=1
+  set -e
+}
+
+# Sigh http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
+trap 'cleanup_atexit; [ $FINISHED_SUCCESSFULLY -eq 1 ] && printf "Completed successfully\n"' EXIT
+trap 'cleanup_atexit; trap - INT; kill -INT $$' INT
+
+set_debconf_selections() {
+  ssh_in_to_qemu chroot /mnt sh -l -ex - <<EOF
+debconf-set-selections <<SELEOF
+# System's default wordlist:
+# Choices: english (Webster's Second International English wordlist), Manual symlinks setting
+dictionaries-common	dictionaries-common/default-wordlist	select	english (Webster's Second International English wordlist)
+# Backend to use for TrueType handling on X:
+# Choices: freetype, xtt
+x-ttcidfont-conf	x-ttcidfont-conf/tt_backend	select	freetype
+# Character set to support:
+# Choices: . Arabic, # Armenian, # Cyrillic - KOI8-R and KOI8-U, # Cyrillic - non-Slavic languages, # Cyrillic - Slavic languages (also Bosnian and Serbian Latin), . Ethiopic, # Georgian, # Greek, # Hebrew, # Lao, # Latin1 and Latin5 - western Europe and Turkic languages, # Latin2 - central Europe and Romanian, # Latin3 and Latin8 - Chichewa; Esperanto; Irish; Maltese and Welsh, # Latin7 - Lithuanian; Latvian; Maori and Marshallese, . Latin - Vietnamese, # Thai, . Combined - Latin; Slavic Cyrillic; Hebrew; basic Arabic, . Combined - Latin; Slavic Cyrillic; Greek, . Combined - Latin; Slavic and non-Slavic Cyrillic
+console-setup	console-setup/codeset47	select	. Combined - Latin; Slavic Cyrillic; Greek
+# Time zone:
+# Choices: GMT, GMT+0, GMT+1, GMT+10, GMT+11, GMT+12, GMT+2, GMT+3, GMT+4, GMT+5, GMT+6, GMT+7, GMT+8, GMT+9, GMT-0, GMT-1, GMT-10, GMT-11, GMT-12, GMT-13, GMT-14, GMT-2, GMT-3, GMT-4, GMT-5, GMT-6, GMT-7, GMT-8, GMT-9, GMT0, Greenwich, UCT, UTC, Universal, Zulu
+tzdata	tzdata/Zones/Etc	select	UTC
+# Font for the console:
+# Choices: Fixed, Terminus, TerminusBold, TerminusBoldVGA, VGA, Do not change the boot/kernel font
+console-setup	console-setup/fontface47	select	Do not change the boot/kernel font
+# Enable subpixel rendering for screen:
+# Choices: Automatic, Always, Never
+fontconfig-config	fontconfig/subpixel_rendering	select	Automatic
+# Method for toggling between national and Latin mode:
+# Choices: Caps Lock, Right Alt (AltGr), Right Control, Right Shift, Right Logo key, Menu key, Alt+Shift, Control+Shift, Control+Alt, Alt+Caps Lock, Left Control+Left Shift, Left Alt, Left Control, Left Shift, Left Logo key, Scroll Lock key, No toggling
+keyboard-configuration	keyboard-configuration/toggle	select	No toggling
+# Font size:
+# Choices: 13, 14, 15, 16, 18
+console-setup	console-setup/fontsize-text47	select	16
+# Locales to be generated:
+# Choices: <SNIP>
+locales	locales/locales_to_be_generated	multiselect	en_GB.UTF-8 UTF-8
+# Keyboard model:
+# Choices: <SNIP>
+keyboard-configuration	keyboard-configuration/model	select	Generic 105-key (Intl) PC
+# Users allowed to start the X server:
+# Choices: Root Only, Console Users Only, Anybody
+x11-common	x11-common/xwrapper/allowed_users	select	Console Users Only
+# Compose key:
+# Choices: No compose key, Right Alt (AltGr), Right Control, Right Logo key, Menu key, Left Logo key, Caps Lock
+keyboard-configuration	keyboard-configuration/compose	select	No compose key
+# Country of origin for the keyboard:
+# Choices: <SNIP>
+keyboard-configuration	keyboard-configuration/layout	select	United Kingdom
+# Keymap to use:
+# Choices: American English, Belarusian, Belgian, Brazilian (ABNT2 layout), Brazilian (EUA layout), British English, Bulgarian, Bulgarian (phonetic layout), Canadian French, Canadian Multilingual, Croatian, Czech, Danish, Dutch, Dvorak, Estonian, Finnish, French, German, Greek, Hebrew, Hungarian, Icelandic, Italian, Japanese, Kirghiz, Latin American, Latvian, Lithuanian, Macedonian, Norwegian, Polish, Portuguese, Romanian, Russian, Serbian (Cyrillic), Slovakian, Slovene, Spanish, Swedish, Swiss French, Swiss German, Thai, Turkish (F layout), Turkish (Q layout), Ukrainian
+keyboard-configuration	keyboard-configuration/xkb-keymap	select	British English
+# Keyboard layout:
+# Choices: United Kingdom, United Kingdom - Colemak, United Kingdom - Dvorak, United Kingdom - Dvorak (UK Punctuation), United Kingdom - Extended - Winkeys, United Kingdom - International (with dead keys), United Kingdom - Macintosh, Other
+keyboard-configuration	keyboard-configuration/variant	select	United Kingdom
+# Geographic area:
+# Choices: Africa, America, Antarctica, Australia, Arctic, Asia, Atlantic, Europe, Indian, Pacific, SystemV, US, Etc
+tzdata	tzdata/Areas	select	Etc
+# Method for temporarily toggling between national and Latin input:
+# Choices: No temporary switch, Both Logo keys, Right Alt (AltGr), Right Logo key, Left Alt, Left Logo key
+keyboard-configuration	keyboard-configuration/switch	select	No temporary switch
+# Encoding to use on the console:
+# Choices: ARMSCII-8, CP1251, CP1255, CP1256, GEORGIAN-ACADEMY, GEORGIAN-PS, IBM1133, ISIRI-3342, ISO-8859-1, ISO-8859-10, ISO-8859-11, ISO-8859-13, ISO-8859-14, ISO-8859-15, ISO-8859-16, ISO-8859-2, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6, ISO-8859-7, ISO-8859-8, ISO-8859-9, KOI8-R, KOI8-U, TIS-620, UTF-8, VISCII
+console-setup	console-setup/charmap47	select	UTF-8
+# Font tuning method for screen:
+# Choices: Native, Autohinter, None
+fontconfig-config	fontconfig/hinting_type	select	Native
+# Font size:
+# Choices: 
+console-setup	console-setup/fontsize-fb47	select	16
+# The desktop environment to install when the desktop task is selected
+# Choices: gnome, kde, xfce
+tasksel	tasksel/desktop	multiselect	xfce
+# Key to function as AltGr:
+# Choices: The default for the keyboard layout, No AltGr key, Right Alt (AltGr), Right Control, Right Logo key, Menu key, Left Alt, Left Logo key, Keypad Enter key, Both Logo keys, Both Alt keys
+keyboard-configuration	keyboard-configuration/altgr	select	The default for the keyboard layout
+# Default locale for the system environment:
+# Choices: None, en_GB.UTF-8
+locales	locales/default_environment_locale	select	en_GB.UTF-8
+SELEOF
+EOF
+}
+
+install_packages() {
+  # we may want to break out DEBIAN_FRONTEND=noninteractive
+  ssh_in_to_qemu chroot /mnt sh -l -ex - <<EOF
+apt-get update || true
+# install some utils
+apt-get install -y ssh locales less fbset sudo psmisc strace module-init-tools ifplugd
+apt-get install --no-install-recommends -y xserver-xorg-video-fbdev
+apt-get install --no-install-recommends -y xserver-xorg xinit
+apt-get install --no-install-recommends -y midori lxde lxtask menu-xdg
+apt-get install -y mupdf python idle build-essential python-pygame gtk2-engines libudev-dev
+apt-get install -y netsurf-gtk zenity lxmusic bash-completion
+apt-get install -y luajit lua5.1
+apt-get install -y console-setup keyboard-configuration
+apt-get install -y fake-hwclock ntp
+/etc/init.d/fake-hwclock stop # save current time
+insserv -r hwclock.sh hwclockfirst.sh
+apt-get clean
+EOF
+}
+
+add_pi_user_to_groups() {
+  onvm_chroot sh -l -ex - <<\EOF
+for GRP in adm dialout cdrom audio users sudo video games; do
+  adduser pi $GRP
+done
+EOF
+}
+
+remove_ssh_host_keys() {
+  ssh_in_to_qemu sh -x - <<EOF
+rm -f /mnt/etc/ssh/ssh_host_*_key*
+EOF
+}
+
+configure_ifplugd() {
+  onvm_chroot sh -l -ex - <<\EOF
+sed /etc/default/ifplugd -e 's/^INTERFACES.*/INTERFACES="auto"/'
+sed /etc/default/ifplugd -e 's/^HOTPLUG_INTERFACES.*/HOTPLUG_INTERFACES="all"/'
+EOF
+}
+
+add_opt_vc_lib_to_ld_so() {
+  onvm_chroot sh -l -ex - <<EOF
+echo "/opt/vc/lib" > /etc/ld.so.conf.d/vmcs.conf
+ldconfig
+EOF
+}
+
+setup_sudoers() {
+  onvm_chroot sh -l -ex - <<EOF
+  chmod +w /etc/sudoers
+  echo "pi ALL=(ALL) ALL" >> /etc/sudoers
+  chmod -w /etc/sudoers
+EOF
+}
+
+# It's not to have the sbin dirs in $PATH as that gives us ifconfig
+fiddle_default_PATH() {
+  # This sed match is clearly brittle and specific to the current debian 
+  # /etc/profile
+  onvm_chroot sh -l -ex - <<EOF
+  sed /etc/profile -e \
+  's|PATH="/usr/.*games.*$|PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"|'
+EOF
+}
+
+OLDDIR=$(pwd)
+cd $WORKDIR
+branch_image ../$OUTDIR/stage2.qed $CURIMG || die "Problem branching from previous image"
+run_qemu $CURIMG || die "Problem starting qemu"
+disable_starting_services
+set_debconf_selections || die "Error setting debconf selections"
+install_packages || die "Error installing packages"
+configure_ifplugd || die "Problem configuring ifplugd"
+add_pi_user_to_groups || die "Failed to add pi user to standard groups"
+add_opt_vc_lib_to_ld_so || die "Problem adding /opt/vc/lib to /etc/ld.so.conf.d"
+setup_sudoers || die "problem setting up sudoers"
+fiddle_default_PATH || die "Problem fiddling default PATH"
+allow_starting_services
+remove_ssh_host_keys
+shutdown_qemu || die "Failed to shutdown qemu"
+chmod -w $CURIMG
+cd "$OLDDIR"
+mv $WORKDIR/$CURIMG $OUTDIR
+FINISHED_SUCCESSFULLY=1

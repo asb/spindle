@@ -1,0 +1,117 @@
+#!/bin/sh
+# Part of spindle http://asbradbury.org/projects/spindle
+#
+# See LICENSE file for copyright and license details
+
+set -ex
+
+WORKDIR=work
+OUTDIR=out
+CURIMG=stage2.qed
+NBD_DEV=/dev/nbd0
+BOOT_DEV="$NBD_DEV"p1
+ROOT_DEV="$NBD_DEV"p2
+
+. ./common
+
+FINISHED_SUCCESSFULLY=0
+CLEANED_UP=0
+
+cleanup_atexit() {
+  set +e
+  if [ $CLEANED_UP -ne 1 ]; then
+    printf "Initiating cleanup\n"
+    [ -p fifo.in ] && shutdown_qemu
+    [ -b "$BOOT_DEV" ] && sudo umount $BOOT_DEV # TODO: should really trap a signal to make sure these always gets cleaned up
+    [ -b "$BOOT_DEV" ] && sudo umount $ROOT_DEV
+    [ -b "$NBD_DEV" ] && detach_image_from_nbd $NBD_DEV
+  fi
+  CLEANED_UP=1
+  set -e
+}
+
+# Sigh http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
+trap 'cleanup_atexit; [ $FINISHED_SUCCESSFULLY -eq 1 ] && printf "Completed successfully\n"' EXIT
+trap 'cleanup_atexit; trap - INT; kill -INT $$' INT
+
+# For now we add a root user (this is a totally minimal system). It should be 
+# disabled at a later stage
+# TODO: might want to add to some groups using adduser user group
+configure_users() {
+  ssh_in_to_qemu chroot /mnt sh -ex - <<EOF
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+adduser --disabled-password --gecos "" pi
+echo "pi:raspberry" | chpasswd
+echo "root:root" | chpasswd
+EOF
+}
+
+configure_fstab() {
+  cat <<EOF | sudo tee rootfs/etc/fstab
+proc            /proc           proc    defaults          0       0
+/dev/mmcblk0p1  /boot           vfat    defaults          0       0
+/dev/mmcblk0p2  /               ext4    defaults,noatime  0       0
+#/dev/mmcblk0p3  none            swap    sw                0       0
+EOF
+}
+
+# TODO: might want qt source too
+configure_sources_list() {
+  cat <<EOF | sudo tee rootfs/etc/apt/sources.list
+deb http://www-uxsup.csx.cam.ac.uk/pub/linux/debian wheezy main non-free
+EOF
+}
+
+configure_network_interfaces() {
+  cat <<EOF | sudo tee rootfs/etc/network/interfaces
+auto lo
+
+iface lo inet loopback
+iface eth0 inet dhcp
+EOF
+}
+
+configure_hostname() {
+  sudo sh -c "echo raspberrypi > rootfs/etc/hostname"
+  sudo sh -c 'printf "127.0.1.1\traspberrypi\n" >> rootfs/etc/hosts'
+}
+
+download_and_extract_firmware_if_necessary() {
+  if ! [ -d firmware ]; then
+    [ -f firmware.tar.gz ] || wget --no-check-certificate https://github.com/raspberrypi/firmware/tarball/master -O firmware.tar.gz
+    mkdir -p firmware
+    tar -C firmware --strip-components=1 -xvf firmware.tar.gz
+  fi
+}
+
+OLDDIR=$(pwd)
+cd $WORKDIR
+branch_image ../$OUTDIR/stage1.qed $CURIMG || die "Failed to branch previous image"
+run_qemu $CURIMG || die "Running qemu failed"
+configure_users
+shutdown_qemu
+download_and_extract_firmware_if_necessary || die "Problem downloading and extracting firmware"
+sudo -v
+attach_image_to_nbd $CURIMG $NBD_DEV || die "Failed to connect to nbd image"
+mkdir -p boot
+sudo mount $BOOT_DEV boot || die "Problem mounting target boot partition"
+mkdir -p rootfs
+sudo mount $ROOT_DEV rootfs || die "Problem mounting target rootfs"
+configure_fstab
+configure_sources_list
+configure_network_interfaces
+configure_hostname
+sudo cp -a firmware/modules rootfs/lib
+sudo cp -a firmware/opt/* rootfs/opt
+sudo cp -r firmware/boot/* boot
+echo "dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 \
+console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait" | sudo tee boot/cmdline.txt
+# TODO: Gray also has a vchiq udev rule
+sudo touch rootfs/etc/mtab # let mount handle mtab. TODO: test with df this does as desired
+# Don't rename eth0 when we put card in a new board
+sudo sed -i -e 's/KERNEL\!="eth\*|/KERNEL\!="/' rootfs/lib/udev/rules.d/75-persistent-net-generator.rules
+cleanup_atexit
+chmod -w $CURIMG
+cd "$OLDDIR"
+mv $WORKDIR/$CURIMG $OUTDIR
+FINISHED_SUCCESSFULLY=1

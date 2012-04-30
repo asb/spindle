@@ -1,0 +1,78 @@
+#!/bin/sh
+# Part of spindle http://asbradbury.org/projects/spindle
+#
+# See LICENSE file for copyright and license details
+
+set -e
+
+WORKDIR=work
+OUTDIR=out
+CURIMG=stage0.qed
+NBD_DEV=/dev/nbd0
+BOOT_DEV="$NBD_DEV"p1
+ROOT_DEV="$NBD_DEV"p2
+
+# TODO: always clean up in error cases (unmount filesystems and detach nbd)
+
+. ./common
+
+FINISHED_SUCCESSFULLY=0
+CLEANED_UP=0
+
+cleanup_atexit() {
+  set +e
+  if [ $CLEANED_UP -ne 1 ]; then
+    printf "Initiating cleanup\n"
+    [ -b "$BOOT_DEV" ] && sudo umount $BOOT_DEV # TODO: should really trap a signal to make sure these always gets cleaned up
+    [ -b "$BOOT_DEV" ] && sudo umount $ROOT_DEV
+    [ -b "$NBD_DEV" ] && detach_image_from_nbd $NBD_DEV
+  fi
+  CLEANED_UP=1
+  set -e
+}
+
+# Sigh http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
+trap 'cleanup_atexit; [ $FINISHED_SUCCESSFULLY -eq 1 ] && printf "Completed successfully\n"' EXIT
+trap 'cleanup_atexit; trap - INT; kill -INT $$' INT
+
+create_partition_table() {
+  # TODO: partition sizes shouldn't be hard-coded
+  sudo parted $1 <<EOF
+  unit mb
+  mklabel msdos
+  mkpart primary fat32 0 100
+  mkpart primary ext4 104 1800
+  print
+  quit
+EOF
+}
+
+do_debootstrap() {
+  # TODO: mirror shouldn't be hard-coded
+  sudo debootstrap --components=main,contrib,non-free \
+  --verbose \
+  --foreign --arch armel \
+  $1 $2 http://www-uxsup.csx.cam.ac.uk/pub/linux/debian
+}
+
+OLDDIR=$(pwd)
+mkdir -p $WORKDIR
+cd $WORKDIR
+[ -b "$NBD_DEV" ] || die "nbd device '%s' does not exist. Try sudo modprobe nbd max_part=16" "$NBD_DEV"
+qemu-img create -f qed $CURIMG 2G || die "Failed to create image"
+sudo -v
+attach_image_to_nbd $CURIMG $NBD_DEV || die "Failed to connect to nbd image"
+create_partition_table $NBD_DEV || die "Failed to make partition table"
+sudo mkdosfs $BOOT_DEV || die "Failed to initialise fat32 partition"
+sudo mkfs.ext4 -O ^huge_file $ROOT_DEV || die "Failed to initialise ext4 partition"
+mkdir -p boot
+sudo mount $BOOT_DEV boot || die "Problem mounting target boot partition"
+mkdir -p rootfs
+sudo mount $ROOT_DEV rootfs || die "Problem mounting target rootfs"
+do_debootstrap wheezy rootfs || die "Problem encountered when performing debootstrap"
+cleanup_atexit
+chmod -w $CURIMG
+cd "$OLDDIR"
+mkdir -p $OUTDIR
+mv $WORKDIR/$CURIMG $OUTDIR
+FINISHED_SUCCESSFULLY=1

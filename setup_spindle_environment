@@ -1,0 +1,88 @@
+#!/bin/sh
+# Part of spindle http://asbradbury.org/projects/spindle
+#
+# See LICENSE file for copyright and license details
+
+set -e
+
+FINISHED_SUCCESSFULLY=0
+
+# Sigh, won't get called in dash at ctrl-c http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
+trap '[ $FINISHED_SUCCESSFULLY -eq 0 ] && echo "Failed to complete" || echo "Completed successfully"' EXIT
+
+if [ $(id -u) -ne 0 ]; then
+  printf "Script must be run as root\n"
+  exit 1
+fi
+
+die() {
+  FMTSTR=$1
+  shift
+  printf "Died: $FMTSTR\n" "$@" >&2
+  exit 1
+}
+
+show_usage() {
+  printf "./setup_spindle_environment DIRNAME\n"
+}
+
+[ "$1" ] || show_usage
+TARGET_DIR=$(readlink -m "$1")
+: ${DEB_MIRROR:=http://ftp.uk.debian.org/debian/}
+
+apt-get install schroot || die "Failed to install schroot"
+
+printf "About to set up chroot in '%s'. Ok? [y/n]: " "$TARGET_DIR"
+read YN
+[ "$YN" = "y" ] || die "You said no. Exiting"
+printf "What users should be able to schroot (comma-separated): "
+read USERS
+[ -z "$USERS" ] && die "You didn't list any users"
+
+SCHROOT_SPINDLE_CONF=/etc/schroot/chroot.d/spindle.conf
+
+if [ -e "$SCHROOT_SPINDLE_CONF" ]; then
+  printf "Overwrite existing config '%s'? [y/n]: " "$SCHROOT_SPINDLE_CONF"
+  read YN && [ "$YN" = "y" ] || exit
+fi
+
+mkdir -p $(dirname "$SCHROOT_SPINDLE_CONF")
+cat << EOF > "$SCHROOT_SPINDLE_CONF" || die "Failed to configure schroot"
+[spindle]
+type=directory
+description=Debian wheezy for spindle
+directory=$TARGET_DIR
+preserve-environment=true
+script-config=spindle/config
+users=$USERS
+groups=$USERS
+root-groups=root
+EOF
+
+printf "\nCreated %s:\n\n" "$SCHROOT_SPINDLE_CONF"
+cat "$SCHROOT_SPINDLE_CONF"
+printf "\n"
+
+[ ! -e /etc/schroot/spindle ] && cp -a /etc/schroot/default /etc/schroot/spindle
+
+# We want rbind of /home for cases where /home is provided by autofs
+# See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=648459
+sed /etc/schroot/spindle/fstab -e "s|^\(/home.*\)bind\(.*\)|\1rbind\2|" > /etc/schroot/spindle/fstab.new || true
+mv /etc/schroot/spindle/fstab.new /etc/schroot/spindle/fstab || true
+
+debootstrap \
+  --include="qemu,bash-completion,augeas-tools,debootstrap,less,\
+  sudo,parted,openssh-client,e2fsprogs,dosfstools,squashfs-tools,bzip2" \
+  wheezy "$TARGET_DIR" "$DEB_MIRROR" || die "Debootstrap failed"
+
+# Disable launch of services in chroot
+printf '#!/bin/sh\nexit 101\n' > "$TARGET_DIR"/usr/sbin/policy-rc.d
+chmod 755 "$TARGET_DIR"/usr/sbin/policy-rc.d
+
+# Make sure sudo is enabled within chroot
+chmod +w "$TARGET_DIR"/etc/sudoers
+echo "%admin ALL=(ALL) ALL" >> "$TARGET_DIR"/etc/sudoers
+chmod -w "$TARGET_DIR"/etc/sudoers
+
+printf "\nchroot created at '%s'. Use \`schroot -c spindle\` to enter it\n" "$TARGET_DIR"
+FINISHED_SUCCESSFULLY=1
