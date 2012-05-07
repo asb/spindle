@@ -81,6 +81,9 @@ M4U= asb@ulala"
 setup_dropbear() {
   chmod +x dropbearmulti-armv6l
   cp -a dropbearmulti-armv6l qemu_rootfs/bin/dropbear
+  cd qemu_rootfs/bin
+  ln -s dropbear scp
+  cd "$OLDPWD"
   mkdir -p qemu_rootfs/etc/dropbear
   printf "%s" "$DROPBEAR_DSS_KEY" | base64 -d > qemu_rootfs/etc/dropbear/dropbear_dss_host_key
   printf "%s" "$PRIVATE_SSH_KEY" > qemu_arm_key

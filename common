@@ -19,6 +19,10 @@ ssh_in_to_qemu() {
   ssh -i qemu_arm_key -p 22000 -lroot localhost "$@"
 }
 
+scp_in_to_qemu() {
+  scp -i qemu_arm_key -P 22000 $1 root@localhost:$2
+}
+
 onvm_chroot() {
   ssh_in_to_qemu chroot /mnt "$@"
 }
