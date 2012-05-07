@@ -64,6 +64,16 @@ cat "$SCHROOT_SPINDLE_CONF"
 printf "\n"
 
 [ ! -e /etc/schroot/spindle ] && cp -a /etc/schroot/default /etc/schroot/spindle
+cat << \EOF > /etc/schroot/spindle/config
+# Filesystems to mount inside the chroot.
+FSTAB="/etc/schroot/spindle/fstab"
+
+# Files to copy from the host system into the chroot.
+COPYFILES="/etc/schroot/spindle/copyfiles"
+
+# System NSS databases to copy into the chroot.
+NSSDATABASES="/etc/schroot/spindle/nssdatabases"
+EOF
 
 # We want rbind of /home for cases where /home is provided by autofs
 # See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=648459
