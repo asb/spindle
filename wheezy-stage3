@@ -115,9 +115,11 @@ apt-get install --no-install-recommends -y xserver-xorg xinit
 apt-get install --no-install-recommends -y midori lxde lxtask menu-xdg
 apt-get install -y mupdf python idle build-essential python-pygame gtk2-engines libudev-dev
 apt-get install -y netsurf-gtk zenity lxmusic bash-completion
-apt-get install -y luajit lua5.1
+apt-get install -y luajit lua5.1 gksu
 apt-get install -y console-setup keyboard-configuration
+apt-get install -y --no-install-recommends xdg-utils
 apt-get install -y fake-hwclock ntp
+apt-get install -y desktop-base
 /etc/init.d/fake-hwclock stop # save current time
 insserv -r hwclock.sh hwclockfirst.sh
 apt-get clean
@@ -198,6 +200,66 @@ hardlink -t /usr/share/doc
 EOF
 }
 
+configure_lxde() {
+  onvm_chroot sh -l -e <<EOF
+mkdir -p /opt/rpi_artwork
+EOF
+  scp_in_to_qemu ../misc/Raspberry_Pi_Logo.png /mnt/opt/rpi_artwork
+  onvm_chroot sh -l -e <<\EOF
+# first change theme to mist (seems to render noticably faster)
+sed /etc/xdg/lxsession/LXDE/desktop.conf -i -e "s|sNet/ThemeName.*|sNet/ThemeName=Mist|"
+
+# change background
+update-alternatives --install /usr/share/images/desktop-base/desktop-background \
+  desktop-background /opt/rpi_artwork/Raspberry_Pi_Logo.png 65
+PCMANFMCFG=/etc/xdg/pcmanfm/LXDE/pcmanfm.conf
+sed "$PCMANFMCFG" -i -e 's/^wallpaper_mode.*/wallpaper_mode=3/'
+sed "$PCMANFMCFG" -i -e 's/^desktop_bg.*/desktop_bg=#ffffff/'
+
+# while we're at it, let's not use xdg-su which Debian doesn't even provide
+sed "$PCMANFMCFG" -i -e 's/^su_cmd.*/su_cmd=gksu %s/'
+EOF
+}
+
+install_qt5() {
+  onvm_chroot sh -l -e <<\EOF
+echo "# Nokia Qt5 development" >> /etc/apt/sources.list
+echo "deb http://archive.qmh-project.org/rpi/debian/ unstable main" >> /etc/apt/sources.list
+apt-get update || true # work around for the fact my preferred mirror is a bit broken
+apt-get install --allow-unauthenticated -y qt50-snapshot qt50-quick-particle-examples qt50-quick-presentation-framework
+apt-get clean
+EOF
+}
+
+adjust_swappiness() {
+  onvm_chroot sh -l -e <<\EOF
+  printf "\n# rpi tweaks\nvm.swappiness=1" >> /etc/sysctl.conf
+EOF
+}
+
+install_scratch() {
+  onvm_chroot sh -l -e <<\EOF
+# see http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=471927, scratch is 
+# currently incompatible with wheezy's squeak-vm
+wget http://ftp.uk.debian.org/debian/pool/main/s/squeak-vm/squeak-vm_4.0.3.2202-2_armel.deb
+dpkg -i squeak*.deb || true
+apt-get install -f -y
+rm squeak*.deb
+
+# now pin the squeak-vm version
+cat <<PINEOF > /etc/apt/preferences.d/squeakpin
+Package: squeak-vm
+Pin: version 4.0*
+Pin-Priority: 1001
+PINEOF
+
+apt-cache policy udev # check the pin
+
+# now install scratch and scratch plugins
+# TODO
+EOF
+}
+
 OLDDIR=$(pwd)
 cd $WORKDIR
 branch_image ../$OUTDIR/stage2.qed $CURIMG || die "Problem branching from previous image"
@@ -211,6 +273,9 @@ add_opt_vc_lib_to_ld_so || die "Problem adding /opt/vc/lib to /etc/ld.so.conf.d"
 setup_sudoers || die "problem setting up sudoers"
 fiddle_default_PATH || die "Problem fiddling default PATH"
 save_space_using_hardlink || die "Problem with hardlink"
+configure_lxde || die "Failed to configure lxde"
+install_qt5 || die "Failed to install qt5"
+adjust_swappiness || die "Error setting swapiness"
 allow_starting_services
 remove_ssh_host_keys
 shutdown_qemu || die "Failed to shutdown qemu"
