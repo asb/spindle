@@ -84,30 +84,29 @@ download_and_extract_firmware_if_necessary() {
 
 OLDDIR=$(pwd)
 cd $WORKDIR
-branch_image ../$OUTDIR/stage1.qed $CURIMG || die "Failed to branch previous image"
-run_qemu $CURIMG || die "Running qemu failed"
-configure_users
-shutdown_qemu
-download_and_extract_firmware_if_necessary || die "Problem downloading and extracting firmware"
+dotask branch_image ../$OUTDIR/stage1.qed $CURIMG
+dotask run_qemu $CURIMG
+dotask configure_users
+dotask shutdown_qemu
+dotask download_and_extract_firmware_if_necessary
 sudo -v
-attach_image_to_nbd $CURIMG $NBD_DEV || die "Failed to connect to nbd image"
+dotask attach_image_to_nbd $CURIMG $NBD_DEV
 mkdir -p boot
-sudo mount $BOOT_DEV boot || die "Problem mounting target boot partition"
+dotask sudo mount $BOOT_DEV boot
 mkdir -p rootfs
-sudo mount $ROOT_DEV rootfs || die "Problem mounting target rootfs"
-configure_fstab
-configure_sources_list
-configure_network_interfaces
-configure_hostname
-sudo cp -a firmware/modules rootfs/lib
-sudo cp -a firmware/opt/* rootfs/opt
-sudo cp -r firmware/boot/* boot
+dotask sudo mount $ROOT_DEV rootfs
+dotask configure_fstab
+dotask configure_sources_list
+dotask configure_network_interfaces
+dotask configure_hostname
+dotask sudo cp -a firmware/modules rootfs/lib
+dotask sudo cp -a firmware/opt/* rootfs/opt
+dotask sudo cp -r firmware/boot/* boot
 echo "dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 \
 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait" | sudo tee boot/cmdline.txt
-# TODO: Gray also has a vchiq udev rule
 sudo touch rootfs/etc/mtab # let mount handle mtab. TODO: test with df this does as desired
 # Don't rename eth0 when we put card in a new board
-sudo sed -i -e 's/KERNEL\!="eth\*|/KERNEL\!="/' rootfs/lib/udev/rules.d/75-persistent-net-generator.rules
+dotask sudo sed -i -e 's/KERNEL\!="eth\*|/KERNEL\!="/' rootfs/lib/udev/rules.d/75-persistent-net-generator.rules
 cleanup_atexit
 chmod -w $CURIMG
 cd "$OLDDIR"
