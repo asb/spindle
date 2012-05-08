@@ -82,7 +82,7 @@ mv /etc/schroot/spindle/fstab.new /etc/schroot/spindle/fstab || true
 
 debootstrap \
   --include="qemu,bash-completion,augeas-tools,debootstrap,less,\
-  sudo,parted,openssh-client,e2fsprogs,dosfstools,squashfs-tools,bzip2" \
+  sudo,parted,openssh-client,e2fsprogs,dosfstools,squashfs-tools,bzip2,git" \
   wheezy "$TARGET_DIR" "$DEB_MIRROR" || die "Debootstrap failed"
 
 # Disable launch of services in chroot
