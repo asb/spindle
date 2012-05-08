@@ -1,0 +1,91 @@
+#!/bin/sh
+# Part of spindle http://asbradbury.org/projects/spindle
+#
+# See LICENSE file for copyright and license details
+
+set -ex
+
+WORKDIR=work
+OUTDIR=out
+CURIMG=stage4-lxde-edu.qed
+
+. ./common
+
+FINISHED_SUCCESSFULLY=0
+CLEANED_UP=0
+
+cleanup_atexit() {
+  set +e
+  if [ $CLEANED_UP -ne 1 ]; then
+    printf "Initiating cleanup\n"
+    [ -p fifo.in ] && shutdown_qemu
+  fi
+  CLEANED_UP=1
+  set -e
+}
+
+# Sigh http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
+trap 'cleanup_atexit; [ $FINISHED_SUCCESSFULLY -eq 1 ] && printf "Completed successfully\n"' EXIT
+trap 'cleanup_atexit; trap - INT; kill -INT $$' INT
+
+install_packages() {
+  ssh_in_to_qemu chroot /mnt sh -l -ex - <<EOF
+apt-get update || true
+apt-get install -y python idle python-pygame python-tk
+apt-get install -y python3 idle3 python3-tk
+apt-get clean
+EOF
+}
+
+install_scratch() {
+  download_if_necessary http://asbradbury.org/tmp/raspi/scratch/scratch_1.4.0.1-0miry3_all.deb
+  scp_in_to_qemu scratch_*.deb /mnt/root
+  download_if_necessary http://asbradbury.org/tmp/raspi/scratch/scratch-plugins_1.4.0.1-0miry3_armel.deb
+  scp_in_to_qemu scratch-plugins*.deb /mnt/root
+  # see http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=471927, scratch is 
+  # currently incompatible with wheezy's squeak-vm
+  download_if_necessary http://ftp.uk.debian.org/debian/pool/main/s/squeak-vm/squeak-vm_4.0.3.2202-2_armel.deb
+  scp_in_to_qemu squeak-vm*.deb /mnt/root
+  
+  onvm_chroot sh -l -e <<\EOF
+cd /root
+dpkg -i squeak*.deb || true
+apt-get install -f -y
+rm squeak*.deb
+
+# now pin the squeak-vm version
+cat <<PINEOF > /etc/apt/preferences.d/squeakpin
+Package: squeak-vm
+Pin: version 1:4.0*
+Pin-Priority: 1001
+PINEOF
+
+apt-cache policy squeak-vm # check the pin
+
+# now install scratch and scratch plugins
+dpkg -i scratch-plugins*.deb || true
+apt-get install -f -y
+rm scratch-plugins*.deb
+
+dpkg -i scratch_*.deb || true
+apt-get install -f -y
+rm scratch_*.deb
+
+apt-get clean
+EOF
+}
+
+OLDDIR=$(pwd)
+cd $WORKDIR
+branch_image ../$OUTDIR/stage4-lxde.qed $CURIMG || die "Problem branching from previous image"
+run_qemu $CURIMG || die "Problem starting qemu"
+disable_starting_services
+install_packages || die "Error installing packages"
+install_scratch || die "Error while installing scratch"
+save_space_using_hardlink || die "Problem with hardlink"
+allow_starting_services
+shutdown_qemu || die "Failed to shutdown qemu"
+chmod -w $CURIMG
+cd "$OLDDIR"
+mv $WORKDIR/$CURIMG $OUTDIR
+FINISHED_SUCCESSFULLY=1
