@@ -12,8 +12,6 @@ NBD_DEV=/dev/nbd0
 BOOT_DEV="$NBD_DEV"p1
 ROOT_DEV="$NBD_DEV"p2
 
-# TODO: always clean up in error cases (unmount filesystems and detach nbd)
-
 . ./common
 
 FINISHED_SUCCESSFULLY=0
@@ -23,7 +21,7 @@ cleanup_atexit() {
   set +e
   if [ $CLEANED_UP -ne 1 ]; then
     printf "Initiating cleanup\n"
-    [ -b "$BOOT_DEV" ] && sudo umount $BOOT_DEV # TODO: should really trap a signal to make sure these always gets cleaned up
+    [ -b "$BOOT_DEV" ] && sudo umount $BOOT_DEV
     [ -b "$BOOT_DEV" ] && sudo umount $ROOT_DEV
     [ -b "$NBD_DEV" ] && detach_image_from_nbd $NBD_DEV
   fi
@@ -36,7 +34,8 @@ trap 'cleanup_atexit; [ $FINISHED_SUCCESSFULLY -eq 1 ] && printf "Completed succ
 trap 'cleanup_atexit; trap - INT; kill -INT $$' INT
 
 create_partition_table() {
-  # TODO: partition sizes shouldn't be hard-coded
+  # TODO: partition sizes shouldn't be hard-coded and I should have a swap 
+  # partition
   sudo parted $1 <<EOF
   unit mb
   mklabel msdos
@@ -59,7 +58,7 @@ OLDDIR=$(pwd)
 mkdir -p $WORKDIR
 cd $WORKDIR
 [ -b "$NBD_DEV" ] || die "nbd device '%s' does not exist. Try sudo modprobe nbd max_part=16" "$NBD_DEV"
-dotask qemu-img create -f qed $CURIMG 2G
+dotask qemu-img create -f qed $CURIMG 1900M
 sudo -v
 dotask attach_image_to_nbd $CURIMG $NBD_DEV
 dotask create_partition_table $NBD_DEV
