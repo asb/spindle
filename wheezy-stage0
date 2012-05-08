@@ -59,17 +59,17 @@ OLDDIR=$(pwd)
 mkdir -p $WORKDIR
 cd $WORKDIR
 [ -b "$NBD_DEV" ] || die "nbd device '%s' does not exist. Try sudo modprobe nbd max_part=16" "$NBD_DEV"
-qemu-img create -f qed $CURIMG 2G || die "Failed to create image"
+dotask qemu-img create -f qed $CURIMG 2G
 sudo -v
-attach_image_to_nbd $CURIMG $NBD_DEV || die "Failed to connect to nbd image"
-create_partition_table $NBD_DEV || die "Failed to make partition table"
-sudo mkdosfs $BOOT_DEV || die "Failed to initialise fat32 partition"
-sudo mkfs.ext4 -O ^huge_file $ROOT_DEV || die "Failed to initialise ext4 partition"
+dotask attach_image_to_nbd $CURIMG $NBD_DEV
+dotask create_partition_table $NBD_DEV
+dotask sudo mkdosfs $BOOT_DEV
+dotask sudo mkfs.ext4 -O ^huge_file $ROOT_DEV
 mkdir -p boot
-sudo mount $BOOT_DEV boot || die "Problem mounting target boot partition"
+dotask sudo mount $BOOT_DEV boot
 mkdir -p rootfs
-sudo mount $ROOT_DEV rootfs || die "Problem mounting target rootfs"
-do_debootstrap wheezy rootfs || die "Problem encountered when performing debootstrap"
+dotask sudo mount $ROOT_DEV rootfs
+dotask do_debootstrap wheezy rootfs
 cleanup_atexit
 chmod -w $CURIMG
 cd "$OLDDIR"

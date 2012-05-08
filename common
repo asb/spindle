@@ -110,13 +110,17 @@ download_if_necessary() {
   [ -f $(basename "$1") ] || wget "$1"
 }
 
-
 die() {
   FMTSTR=$1
   shift
   printf "Died: $FMTSTR\n" "$@" >&2
   exit 1
 }
+
+dotask() {
+  "$@" || die "Failed while performing task: %s" "$*"
+}
+
 
 if [ $# -ne 0 ]; then
   set -x
