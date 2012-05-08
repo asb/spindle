@@ -26,10 +26,6 @@ cleanup_atexit() {
 trap 'cleanup_atexit; [ $FINISHED_SUCCESSFULLY -eq 1 ] && printf "Completed successfully\n"' EXIT
 trap 'cleanup_atexit; trap - INT; kill -INT $$' INT
 
-download_if_necessary() {
-  [ -f $(basename "$1") ] || wget "$1"
-}
-
 # Security for these keys doesn't matter: just using ssh as it's convenient 
 # It's not easy to disable authentication, so just use passwordless keys.
 

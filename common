@@ -100,6 +100,17 @@ rm /usr/sbin/policy-rc.d
 EOF
 }
 
+save_space_using_hardlink() {
+  onvm_chroot sh -l -e - <<\EOF
+hardlink -t /usr/share/doc
+EOF
+}
+
+download_if_necessary() {
+  [ -f $(basename "$1") ] || wget "$1"
+}
+
+
 die() {
   FMTSTR=$1
   shift

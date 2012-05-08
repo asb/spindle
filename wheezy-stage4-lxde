@@ -1,0 +1,89 @@
+#!/bin/sh
+# Part of spindle http://asbradbury.org/projects/spindle
+#
+# See LICENSE file for copyright and license details
+
+set -ex
+
+WORKDIR=work
+OUTDIR=out
+CURIMG=stage4-lxde.qed
+
+. ./common
+
+FINISHED_SUCCESSFULLY=0
+CLEANED_UP=0
+
+cleanup_atexit() {
+  set +e
+  if [ $CLEANED_UP -ne 1 ]; then
+    printf "Initiating cleanup\n"
+    [ -p fifo.in ] && shutdown_qemu
+  fi
+  CLEANED_UP=1
+  set -e
+}
+
+# Sigh http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
+trap 'cleanup_atexit; [ $FINISHED_SUCCESSFULLY -eq 1 ] && printf "Completed successfully\n"' EXIT
+trap 'cleanup_atexit; trap - INT; kill -INT $$' INT
+
+install_packages() {
+  # we may want to break out DEBIAN_FRONTEND=noninteractive
+  ssh_in_to_qemu chroot /mnt sh -l -ex - <<EOF
+apt-get update || true
+apt-get install --no-install-recommends -y xserver-xorg-video-fbdev
+apt-get install --no-install-recommends -y xserver-xorg xinit
+apt-get install --no-install-recommends -y midori lxde lxtask menu-xdg
+apt-get install -y mupdf gtk2-engines gksu
+apt-get install -y netsurf-gtk zenity lxmusic
+apt-get install -y --no-install-recommends xdg-utils
+apt-get install -y desktop-base
+apt-get clean
+EOF
+}
+
+configure_lxde() {
+  onvm_chroot sh -l -e <<EOF
+mkdir -p /opt/rpi_artwork
+EOF
+  scp_in_to_qemu ../misc/Raspberry_Pi_Logo.png /mnt/opt/rpi_artwork
+  onvm_chroot sh -l -e <<\EOF
+# first change theme to mist (seems to render noticably faster)
+sed /etc/xdg/lxsession/LXDE/desktop.conf -i -e "s|sNet/ThemeName.*|sNet/ThemeName=Mist|"
+
+# change background
+update-alternatives --install /usr/share/images/desktop-base/desktop-background \
+  desktop-background /opt/rpi_artwork/Raspberry_Pi_Logo.png 65
+PCMANFMCFG=/etc/xdg/pcmanfm/LXDE/pcmanfm.conf
+sed "$PCMANFMCFG" -i -e 's/^wallpaper_mode.*/wallpaper_mode=3/'
+sed "$PCMANFMCFG" -i -e 's/^desktop_bg.*/desktop_bg=#ffffff/'
+
+# while we're at it, let's not use xdg-su which Debian doesn't even provide
+sed "$PCMANFMCFG" -i -e 's/^su_cmd.*/su_cmd=gksu %s/'
+EOF
+}
+
+install_qt5() {
+  onvm_chroot sh -l -e <<\EOF
+apt-get update || true # work around for the fact my preferred mirror is a bit broken
+apt-get install --allow-unauthenticated -y qt50-snapshot qt50-quick-particle-examples qt50-quick-presentation-framework
+apt-get clean
+EOF
+}
+
+OLDDIR=$(pwd)
+cd $WORKDIR
+branch_image ../$OUTDIR/stage3.qed $CURIMG || die "Problem branching from previous image"
+run_qemu $CURIMG || die "Problem starting qemu"
+disable_starting_services
+install_packages || die "Error installing packages"
+configure_lxde || die "Failed to configure lxde"
+install_qt5 || die "Failed to install qt5"
+save_space_using_hardlink || die "Problem with hardlink"
+allow_starting_services
+shutdown_qemu || die "Failed to shutdown qemu"
+chmod -w $CURIMG
+cd "$OLDDIR"
+mv $WORKDIR/$CURIMG $OUTDIR
+FINISHED_SUCCESSFULLY=1
