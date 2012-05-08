@@ -102,6 +102,7 @@ dotask configure_hostname
 dotask sudo cp -a firmware/modules rootfs/lib
 dotask sudo cp -a firmware/opt/* rootfs/opt
 dotask sudo cp -r firmware/boot/* boot
+dotask sudo cp -a boot/arm192_start.elf boot/start.elf # default to 192mb memory split
 echo "dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 \
 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait" | sudo tee boot/cmdline.txt
 sudo touch rootfs/etc/mtab # let mount handle mtab. TODO: test with df this does as desired
