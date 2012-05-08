@@ -141,20 +141,20 @@ EOF
 
 OLDDIR=$(pwd)
 cd $WORKDIR
-branch_image ../$OUTDIR/stage0.qed $CURIMG || die "Failed to branch from previous image"
-download_if_necessary http://landley.net/aboriginal/downloads/binaries/simple-root-filesystem/simple-root-filesystem-armv6l.tar.bz2 &&
-download_if_necessary http://landley.net/aboriginal/downloads/binaries/system-image/system-image-armv6l.tar.bz2 &&
-download_if_necessary http://landley.net/aboriginal/downloads/binaries/extras/dropbearmulti-armv6l || die "Failed to download required files"
+dotask branch_image ../$OUTDIR/stage0.qed $CURIMG
+dotask download_if_necessary http://landley.net/aboriginal/downloads/binaries/simple-root-filesystem/simple-root-filesystem-armv6l.tar.bz2
+dotask download_if_necessary http://landley.net/aboriginal/downloads/binaries/system-image/system-image-armv6l.tar.bz2
+dotask download_if_necessary http://landley.net/aboriginal/downloads/binaries/extras/dropbearmulti-armv6l
 [ -f zImage ] || tar -xf system-image-armv6l.tar.bz2 --strip-components=1 system-image-armv6l/zImage
 tar -xvf simple-root-filesystem-armv6l.tar.bz2
 rm -rf qemu_rootfs
 mv simple-root-filesystem-armv6l qemu_rootfs 
-setup_dropbear || die "Failure when setting up dropbear"
-replace_init_sh
-mksquashfs qemu_rootfs qemu_rootfs.sqf -noappend -all-root
-run_qemu $CURIMG || die "Failure running qemu"
-do_second_stage_debootstrap || die "Failure in second stage debootstrap"
-shutdown_qemu || die "Failed to shut down qemu"
+dotask setup_dropbear
+dotask replace_init_sh
+dotask mksquashfs qemu_rootfs qemu_rootfs.sqf -noappend -all-root
+dotask run_qemu $CURIMG
+dotask do_second_stage_debootstrap
+dotask shutdown_qemu
 chmod -w $CURIMG
 cd "$OLDDIR"
 mv $WORKDIR/$CURIMG $OUTDIR
