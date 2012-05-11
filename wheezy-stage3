@@ -205,22 +205,22 @@ EOF
 
 OLDDIR=$(pwd)
 cd $WORKDIR
-branch_image ../$OUTDIR/stage2.qed $CURIMG || die "Problem branching from previous image"
-run_qemu $CURIMG || die "Problem starting qemu"
-disable_starting_services
-set_debconf_selections || die "Error setting debconf selections"
-install_packages || die "Error installing packages"
-configure_ifplugd || die "Problem configuring ifplugd"
-add_pi_user_to_groups || die "Failed to add pi user to standard groups"
-add_opt_vc_lib_to_ld_so || die "Problem adding /opt/vc/lib to /etc/ld.so.conf.d"
-setup_sudoers || die "problem setting up sudoers"
-fiddle_default_PATH || die "Problem fiddling default PATH"
-save_space_using_hardlink || die "Problem with hardlink"
-add_qt5_apt_source || die "Failed to add apt source for qt5"
-adjust_swappiness || die "Error setting swapiness"
-allow_starting_services
-remove_ssh_host_keys
-shutdown_qemu || die "Failed to shutdown qemu"
+dotask branch_image ../$OUTDIR/stage2.qed $CURIMG
+dotask run_qemu $CURIMG
+dotask disable_starting_services
+dotask set_debconf_selections
+dotask install_packages
+dotask configure_ifplugd
+dotask add_pi_user_to_groups
+dotask add_opt_vc_lib_to_ld_so
+dotask setup_sudoers
+dotask fiddle_default_PATH
+dotask save_space_using_hardlink
+dotask add_qt5_apt_source
+dotask adjust_swappiness
+dotask allow_starting_services
+dotask remove_ssh_host_keys
+dotask shutdown_qemu
 chmod -w $CURIMG
 cd "$OLDDIR"
 mv $WORKDIR/$CURIMG $OUTDIR

@@ -75,16 +75,16 @@ ADmrHTzPFE1F0iBERYkCnm+n4ilOdL+YQTStyNzbsj8lgsc+PRB5f3S2o+Cd4ADC\
 M4U= asb@ulala"
 
 setup_dropbear() {
-  chmod +x dropbearmulti-armv6l
-  cp -a dropbearmulti-armv6l qemu_rootfs/bin/dropbear
-  cd qemu_rootfs/bin
-  ln -s dropbear scp
-  cd "$OLDPWD"
-  mkdir -p qemu_rootfs/etc/dropbear
-  printf "%s" "$DROPBEAR_DSS_KEY" | base64 -d > qemu_rootfs/etc/dropbear/dropbear_dss_host_key
-  printf "%s" "$PRIVATE_SSH_KEY" > qemu_arm_key
-  chmod 600 qemu_arm_key
-  printf "%s" "$PUBLIC_SSH_KEY" > qemu_arm_key.pub
+  chmod +x dropbearmulti-armv6l &&
+  cp -a dropbearmulti-armv6l qemu_rootfs/bin/dropbear &&
+  cd qemu_rootfs/bin &&
+  ln -s dropbear scp &&
+  cd "$OLDPWD" &&
+  mkdir -p qemu_rootfs/etc/dropbear &&
+  printf "%s" "$DROPBEAR_DSS_KEY" | base64 -d > qemu_rootfs/etc/dropbear/dropbear_dss_host_key &&
+  printf "%s" "$PRIVATE_SSH_KEY" > qemu_arm_key &&
+  chmod 600 qemu_arm_key &&
+  printf "%s" "$PUBLIC_SSH_KEY" > qemu_arm_key.pub &&
   cp -a qemu_arm_key.pub qemu_rootfs/root
 }
 

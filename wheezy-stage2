@@ -72,7 +72,7 @@ EOF
 }
 
 configure_hostname() {
-  sudo sh -c "echo raspberrypi > rootfs/etc/hostname"
+  sudo sh -c "echo raspberrypi > rootfs/etc/hostname" &&
   sudo sh -c 'printf "127.0.1.1\traspberrypi\n" >> rootfs/etc/hosts'
 }
 
