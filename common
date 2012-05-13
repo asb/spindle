@@ -89,11 +89,19 @@ convert_image() {
 }
 
 export_image_for_release() {
-  qemu-img create -f qed -b $1 temp.qed
+  cd work
+  qemu-img create -f qed -b ../$1 temp.qed
+  run_qemu temp.qed
+  # Change mirror in sources.list to our preferred one. This will go horribly 
+  # wrong if there is more than one entry in sources.list
+  ssh_in_to_qemu sh -ex <<EOF
+sed -i /mnt/etc/apt/sources.list -e "s|^deb [^ ]*|deb http://ftp.uk.debian.org/debian|"
+EOF
+  shutdown_qemu
   attach_image_to_nbd temp.qed /dev/nbd0
   sudo zerofree -v /dev/nbd0p2
   detach_image_from_nbd /dev/nbd0
-  convert_image temp.qed $2
+  convert_image temp.qed ../$2
 }
 
 disable_starting_services() {
