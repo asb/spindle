@@ -44,11 +44,11 @@ EOF
 }
 
 configure_lxde() {
-  onvm_chroot sh -l -e <<EOF
+  onvm_chroot sh -l -e <<EOF &&
 mkdir -p /opt/rpi_artwork
 EOF
-  scp_in_to_qemu ../misc/Raspberry_Pi_Logo.png /mnt/opt/rpi_artwork
-  onvm_chroot sh -l -e <<\EOF
+  scp_in_to_qemu ../misc/Raspberry_Pi_Logo.png /mnt/opt/rpi_artwork &&
+  onvm_chroot sh -l -e <<\EOF &&
 # first change theme to mist (seems to render noticably faster)
 sed /etc/xdg/lxsession/LXDE/desktop.conf -i -e "s|sNet/ThemeName.*|sNet/ThemeName=Mist|"
 
@@ -74,15 +74,15 @@ EOF
 
 OLDDIR=$(pwd)
 cd $WORKDIR
-branch_image ../$OUTDIR/stage3.qed $CURIMG || die "Problem branching from previous image"
-run_qemu $CURIMG || die "Problem starting qemu"
-disable_starting_services
-install_packages || die "Error installing packages"
-configure_lxde || die "Failed to configure lxde"
-install_qt5 || die "Failed to install qt5"
-save_space_using_hardlink || die "Problem with hardlink"
-allow_starting_services
-shutdown_qemu || die "Failed to shutdown qemu"
+dotask branch_image ../$OUTDIR/stage3.qed $CURIMG
+dotask run_qemu $CURIMG
+dotask disable_starting_services
+dotask install_packages
+dotask configure_lxde
+dotask install_qt5
+dotask save_space_using_hardlink
+dotask allow_starting_services
+dotask shutdown_qemu
 chmod -w $CURIMG
 cd "$OLDDIR"
 mv $WORKDIR/$CURIMG $OUTDIR
