@@ -11,6 +11,7 @@ CURIMG=stage0.qed
 NBD_DEV=/dev/nbd0
 BOOT_DEV="$NBD_DEV"p1
 ROOT_DEV="$NBD_DEV"p2
+SWAP_DEV="$NBD_DEV"p3
 
 . ./common
 
@@ -41,6 +42,7 @@ create_partition_table() {
   mklabel msdos
   mkpart primary fat32 0 100
   mkpart primary ext4 104 1800
+  mkpart primary linux-swap 1800 1900
   print
   quit
 EOF
@@ -65,6 +67,7 @@ dotask attach_image_to_nbd $CURIMG $NBD_DEV
 dotask create_partition_table $NBD_DEV
 dotask sudo mkdosfs $BOOT_DEV
 dotask sudo mkfs.ext4 -O ^huge_file $ROOT_DEV
+dotask sudo mkswap $SWAP_DEV
 mkdir -p boot
 dotask sudo mount $BOOT_DEV boot
 mkdir -p rootfs
