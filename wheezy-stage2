@@ -58,7 +58,7 @@ EOF
 # TODO: might want qt source too
 configure_sources_list() {
   cat <<EOF | sudo tee rootfs/etc/apt/sources.list
-deb http://www-uxsup.csx.cam.ac.uk/pub/linux/debian wheezy main non-free
+deb $DEB_MIRROR wheezy main non-free
 EOF
 }
 

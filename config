@@ -1,0 +1,6 @@
+#!/bin/sh
+# Part of spindle http://asbradbury.org/projects/spindle
+#
+# See LICENSE file for copyright and license details
+
+DEB_MIRROR=http://ftp.uk.debian.org/debian

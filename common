@@ -5,6 +5,8 @@
 
 set -e
 
+. ./config
+
 run_qemu() {
   rm fifo.out fifo.in || true
   mkfifo fifo.out fifo.in
