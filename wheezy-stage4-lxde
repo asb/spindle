@@ -31,7 +31,7 @@ trap 'cleanup_atexit; trap - INT; kill -INT $$' INT
 install_packages() {
   # we may want to break out DEBIAN_FRONTEND=noninteractive
   ssh_in_to_qemu chroot /mnt sh -l -ex - <<EOF
-apt-get update || true
+apt-get update
 apt-get install --no-install-recommends -y xserver-xorg-video-fbdev
 apt-get install --no-install-recommends -y xserver-xorg xinit
 apt-get install --no-install-recommends -y midori lxde lxtask menu-xdg
@@ -66,7 +66,7 @@ EOF
 
 install_qt5() {
   onvm_chroot sh -l -e <<\EOF
-apt-get update || true # work around for the fact my preferred mirror is a bit broken
+apt-get update
 apt-get install --allow-unauthenticated -y qt50-snapshot qt50-quick-particle-examples qt50-quick-presentation-framework
 apt-get clean
 EOF

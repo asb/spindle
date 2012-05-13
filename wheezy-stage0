@@ -48,9 +48,10 @@ EOF
 
 do_debootstrap() {
   # TODO: mirror shouldn't be hard-coded
+  # Need bzip2 for http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=657560
   sudo debootstrap --components=main,contrib,non-free \
   --verbose \
-  --foreign --arch armel \
+  --foreign --arch armel --include=bzip2 \
   $1 $2 http://www-uxsup.csx.cam.ac.uk/pub/linux/debian
 }
 

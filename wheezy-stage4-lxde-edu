@@ -30,7 +30,7 @@ trap 'cleanup_atexit; trap - INT; kill -INT $$' INT
 
 install_packages() {
   ssh_in_to_qemu chroot /mnt sh -l -ex - <<EOF
-apt-get update || true
+apt-get update
 apt-get install -y python idle python-pygame python-tk
 apt-get install -y python3 idle3 python3-tk
 apt-get clean
