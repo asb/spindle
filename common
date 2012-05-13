@@ -77,13 +77,21 @@ branch_image() {
 }
 
 write_image() {
-  attach_image_to_nbd $1 /dev/nbd0
-  sudo dd if=/dev/nbd0 of=$2 bs=4M || true
+  attach_image_to_nbd $1 /dev/nbd0 &&
+  sudo dd if=/dev/nbd0 of=$2 bs=4M &&
   detach_image_from_nbd /dev/nbd0
 }
 
 convert_image() {
   qemu-img convert -f qed -O raw $1 $2
+}
+
+export_image_for_release() {
+  qemu-img create -f qed -b $1 temp.qed
+  attach_image_to_nbd temp.qed /dev/nbd0
+  sudo zerofree -v /dev/nbd0p2
+  detach_image_from_nbd /dev/nbd0
+  convert_image temp.qed $2
 }
 
 disable_starting_services() {
