@@ -130,7 +130,7 @@ EOF
 }
 
 remove_ssh_host_keys() {
-  ssh_in_to_qemu sh -x - <<EOF
+  ssh_in_to_qemu sh -ex - <<EOF
 rm -f /mnt/etc/ssh/ssh_host_*_key*
 cat <<\RCL | tee /mnt/etc/rc.local
 #!/bin/sh -e

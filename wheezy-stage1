@@ -139,6 +139,12 @@ apt-get clean
 EOF
 }
 
+configure_udev() {
+  ssh_in_to_qemu sh -e - <<EOF
+  printf 'SUBSYSTEM=="vchiq", GROUP="video", MODE="0660"\n' > /mnt/etc/udev.rules.d/10-local-rpi.rules
+EOF
+}
+
 OLDDIR=$(pwd)
 cd $WORKDIR
 dotask branch_image ../$OUTDIR/stage0.qed $CURIMG
@@ -154,6 +160,7 @@ dotask replace_init_sh
 dotask mksquashfs qemu_rootfs qemu_rootfs.sqf -noappend -all-root
 dotask run_qemu $CURIMG
 dotask do_second_stage_debootstrap
+dotask configure_udev
 dotask shutdown_qemu
 chmod -w $CURIMG
 cd "$OLDDIR"
