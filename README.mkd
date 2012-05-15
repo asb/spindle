@@ -1,6 +1,6 @@
 # spindle - a tool to help spin distribution images
 
-## Temporary description
+## Description
 spindle is a set of scripts to aid building and working on a distribution 
 image. I've been using this tool to generate Debian wheezy images for the 
 Raspberry Pi, with the aim of producing reproducible, unbooted, clean setups 
@@ -11,18 +11,21 @@ It's not massively user friendly yet, but hopefully that should soon change
 
 ## Current scripts
 * `setup_spindle_environment`: Sets up an schroot using wheezy and installs 
-the pre-requisites needed for spindle (mainly qemu, as it turns out I haven't 
-used augeas). If you don't use this, please make sure you have at least qemu 
+the pre-requisites needed for spindle (mainly QEMU, as it turns out I haven't 
+used augeas). If you don't use this, please make sure you have at least QEMU 
 1.0.1
 * `wheezy-stage0`: Create and partition an SD card image, perform the initial 
 debootstrap on the host and copy the files to the SD image.
-* `wheezy-stage1`: Complete second stage of debootstrap under qemu after first 
-setting up a squashfs filesyste derived from Rob Landley's excellent 
+* `wheezy-stage1`: Complete second stage of debootstrap under QEMU after first 
+setting up a squashfs filesystem derived from Rob Landley's excellent 
 Aboriginal Linux. Setup dropbear.
 * `wheezy-stage2`: Add in Raspberry Pi 'firmware' and do misc config (e.g.  
 fstab, network interfaces, hostname). The resulting image is bootable.
-* `wheezy-stage3`: Install and configure a whole bunch of packages. More work 
-to be done here
+* `wheezy-stage3`: Install and configure a few useful packages (such as 
+ifplugd, sudo).
+* `wheezy-stage4-lxde`: Set up the lxde desktop.
+* `wheezy-stage4-lxde-edu`: Install MIT Scratch, Python development tools and 
+other packages.
 
 ## Getting started
 TODO
@@ -34,7 +37,7 @@ patches/pull requests.
 spindle is written in POSIX shell script and tries to make use of QEMU where 
 possible for manipulating the filesystem of the target beging generated. Look 
 at the current scripts for examples. Please do talk to me if you're thinking 
-of any large refactorings.
+of any large refactoring.
 
 Good resources for shell scripting include:
 * `man dash`
