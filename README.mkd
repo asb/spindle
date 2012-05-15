@@ -1,11 +1,10 @@
 # spindle - a tool to help spin distribution images
 
 ## Temporary description
-For now this is very brief. More detailed documentation is forthcoming.
-
-I've been using this tool to generate Debian wheezy images for the Raspberry
-Pi, with the aim of producing reproducible, unbooted, clean setups that 
-require no manual intervention. Primarily I use qemu to do this.
+spindle is a set of scripts to aid building and working on a distribution 
+image. I've been using this tool to generate Debian wheezy images for the 
+Raspberry Pi, with the aim of producing reproducible, unbooted, clean setups 
+that require no manual intervention.
 
 It's not massively user friendly yet, but hopefully that should soon change 
 (and of course, patches are welcome).
@@ -27,3 +26,18 @@ to be done here
 
 ## Getting started
 TODO
+
+## HACKING
+If you want to contribute, please do file issues on the bug tracker or send in 
+patches/pull requests.
+
+spindle is written in POSIX shell script and tries to make use of QEMU where 
+possible for manipulating the filesystem of the target beging generated. Look 
+at the current scripts for examples. Please do talk to me if you're thinking 
+of any large refactorings.
+
+Good resources for shell scripting include:
+* `man dash`
+* [The POSIX standard](http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html)
+* [Insufficiently known POSIX shell features](http://apenwarr.ca/log/?m=201102#28)
+* [Common shell scripting mistakes](http://www.pixelbeat.org/programming/shell_script_mistakes.html)
