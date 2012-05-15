@@ -139,6 +139,33 @@ dotask() {
   "$@" || die "Failed while performing task: %s" "$*"
 }
 
+FINISHED_SUCCESSFULLY=0
+CLEANED_UP=0
+
+# Sigh http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
+trap 'universal_cleanup"' EXIT
+trap 'universal_cleanup; trap - INT; kill -INT $$' INT
+
+universal_cleanup() {
+  set +e
+  if [ $CLEANED_UP -ne 1 ]; then
+    printf "Initiating cleanup\n"
+    trap - INT
+    trap - EXIT
+    [ -p fifo.in ] && shutdown_qemu
+    [ -b "$BOOT_DEV" ] && sudo umount $BOOT_DEV
+    [ -b "$BOOT_DEV" ] && sudo umount $ROOT_DEV
+    [ -b "$NBD_DEV" ] && detach_image_from_nbd $NBD_DEV
+  fi
+  CLEANED_UP=1
+  if [ $FINISHED_SUCCESSFULLY -eq 1 ]; then
+    printf "Completed script successfully\n"
+  else
+    printf "Did not complete script successfully\n"
+  fi
+  set -e
+}
+
 
 if [ $# -ne 0 ]; then
   set -x

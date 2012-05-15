@@ -5,38 +5,12 @@
 
 set -ex
 
-WORKDIR=work
-OUTDIR=out
 CURIMG=stage2.qed
-NBD_DEV=/dev/nbd0
-BOOT_DEV="$NBD_DEV"p1
-ROOT_DEV="$NBD_DEV"p2
 
 . ./common
 
-FINISHED_SUCCESSFULLY=0
-CLEANED_UP=0
-
-cleanup_atexit() {
-  set +e
-  if [ $CLEANED_UP -ne 1 ]; then
-    printf "Initiating cleanup\n"
-    [ -p fifo.in ] && shutdown_qemu
-    [ -b "$BOOT_DEV" ] && sudo umount $BOOT_DEV # TODO: should really trap a signal to make sure these always gets cleaned up
-    [ -b "$BOOT_DEV" ] && sudo umount $ROOT_DEV
-    [ -b "$NBD_DEV" ] && detach_image_from_nbd $NBD_DEV
-  fi
-  CLEANED_UP=1
-  set -e
-}
-
-# Sigh http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
-trap 'cleanup_atexit; [ $FINISHED_SUCCESSFULLY -eq 1 ] && printf "Completed successfully\n"' EXIT
-trap 'cleanup_atexit; trap - INT; kill -INT $$' INT
-
 # For now we add a root user (this is a totally minimal system). It should be 
 # disabled at a later stage
-# TODO: might want to add to some groups using adduser user group
 configure_users() {
   ssh_in_to_qemu chroot /mnt sh -ex - <<EOF
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -55,7 +29,6 @@ proc            /proc           proc    defaults          0       0
 EOF
 }
 
-# TODO: might want qt source too
 configure_sources_list() {
   cat <<EOF | sudo tee rootfs/etc/apt/sources.list
 deb $DEB_MIRROR wheezy main non-free
@@ -108,7 +81,7 @@ console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait" | sudo tee boot/cmdli
 sudo touch rootfs/etc/mtab # let mount handle mtab. TODO: test with df this does as desired
 # Don't rename eth0 when we put card in a new board
 dotask sudo sed -i -e 's/KERNEL\!="eth\*|/KERNEL\!="/' rootfs/lib/udev/rules.d/75-persistent-net-generator.rules
-cleanup_atexit
+universal_cleanup
 chmod -w $CURIMG
 cd "$OLDDIR"
 mv $WORKDIR/$CURIMG $OUTDIR

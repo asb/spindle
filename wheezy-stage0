@@ -5,34 +5,9 @@
 
 set -e
 
-WORKDIR=work
-OUTDIR=out
 CURIMG=stage0.qed
-NBD_DEV=/dev/nbd0
-BOOT_DEV="$NBD_DEV"p1
-ROOT_DEV="$NBD_DEV"p2
-SWAP_DEV="$NBD_DEV"p3
 
 . ./common
-
-FINISHED_SUCCESSFULLY=0
-CLEANED_UP=0
-
-cleanup_atexit() {
-  set +e
-  if [ $CLEANED_UP -ne 1 ]; then
-    printf "Initiating cleanup\n"
-    [ -b "$BOOT_DEV" ] && sudo umount $BOOT_DEV
-    [ -b "$BOOT_DEV" ] && sudo umount $ROOT_DEV
-    [ -b "$NBD_DEV" ] && detach_image_from_nbd $NBD_DEV
-  fi
-  CLEANED_UP=1
-  set -e
-}
-
-# Sigh http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
-trap 'cleanup_atexit; [ $FINISHED_SUCCESSFULLY -eq 1 ] && printf "Completed successfully\n"' EXIT
-trap 'cleanup_atexit; trap - INT; kill -INT $$' INT
 
 create_partition_table() {
   # TODO: partition sizes shouldn't be hard-coded and I should have a swap 
@@ -49,7 +24,6 @@ EOF
 }
 
 do_debootstrap() {
-  # TODO: mirror shouldn't be hard-coded
   # Need bzip2 for http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=657560
   sudo debootstrap --components=main,contrib,non-free \
   --verbose \
@@ -73,7 +47,7 @@ dotask sudo mount $BOOT_DEV boot
 mkdir -p rootfs
 dotask sudo mount $ROOT_DEV rootfs
 dotask do_debootstrap wheezy rootfs
-cleanup_atexit
+universal_cleanup
 chmod -w $CURIMG
 cd "$OLDDIR"
 mkdir -p $OUTDIR

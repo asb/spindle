@@ -11,23 +11,6 @@ CURIMG=stage4-lxde-edu.qed
 
 . ./common
 
-FINISHED_SUCCESSFULLY=0
-CLEANED_UP=0
-
-cleanup_atexit() {
-  set +e
-  if [ $CLEANED_UP -ne 1 ]; then
-    printf "Initiating cleanup\n"
-    [ -p fifo.in ] && shutdown_qemu
-  fi
-  CLEANED_UP=1
-  set -e
-}
-
-# Sigh http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
-trap 'cleanup_atexit; [ $FINISHED_SUCCESSFULLY -eq 1 ] && printf "Completed successfully\n"' EXIT
-trap 'cleanup_atexit; trap - INT; kill -INT $$' INT
-
 install_packages() {
   ssh_in_to_qemu chroot /mnt sh -l -ex - <<EOF
 apt-get update
