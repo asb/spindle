@@ -185,8 +185,8 @@ EOF
 }
 
 set_default_kernel_modules() {
-  ssh_in_to_qemu sh -e - <<EOF
-  printf 'snd-bcm2835\n' >> /mnt/etc/modules
+  onvm_chroot sh -e - <<EOF
+  printf 'snd-bcm2835\n' >> /etc/modules
 EOF
 }
 

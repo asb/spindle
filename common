@@ -166,7 +166,7 @@ universal_cleanup() {
     [ -b "$BOOT_DEV" ] && sudo umount $ROOT_DEV
     [ -b "$NBD_DEV" ] && detach_image_from_nbd $NBD_DEV
   fi
-  if [ $WAS_TRAPPED -eq 1 ]; then
+  if [ $WAS_TRAPPED -eq 1 ] && [ $FINISHED_SUCCESSFULLY -eq 0 ]; then
     printf "Did not complete script successfully\n"
   fi
   set -e
