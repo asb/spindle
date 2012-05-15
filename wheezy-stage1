@@ -111,18 +111,16 @@ replace_init_sh() {
 }
 
 do_second_stage_debootstrap() {
-onvm_chroot sh -ex - <<EOF
+  onvm_chroot sh -ex - <<EOF
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-./debootstrap/debootstrap --second-stage || true
-dpkg --configure libstdc++6 # work around a bug?
 ./debootstrap/debootstrap --second-stage
 apt-get clean
 EOF
 }
 
 configure_udev() {
-  ssh_in_to_qemu sh -e - <<EOF
-  printf 'SUBSYSTEM=="vchiq", GROUP="video", MODE="0660"\n' > /mnt/etc/udev.rules.d/10-local-rpi.rules
+  onvm_chroot sh -e - <<EOF
+  printf 'SUBSYSTEM=="vchiq", GROUP="video", MODE="0660"\n' > /etc/udev/rules.d/10-local-rpi.rules
 EOF
 }
 
