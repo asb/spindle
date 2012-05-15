@@ -31,7 +31,6 @@ do_debootstrap() {
   $1 $2 $DEB_MIRROR
 }
 
-OLDDIR=$(pwd)
 mkdir -p $WORKDIR
 cd $WORKDIR
 [ -b "$NBD_DEV" ] || die "nbd device '%s' does not exist. Try sudo modprobe nbd max_part=16" "$NBD_DEV"
@@ -48,8 +47,4 @@ mkdir -p rootfs
 dotask sudo mount $ROOT_DEV rootfs
 dotask do_debootstrap wheezy rootfs
 universal_cleanup
-chmod -w $CURIMG
-cd "$OLDDIR"
-mkdir -p $OUTDIR
-mv $WORKDIR/$CURIMG $OUTDIR
-FINISHED_SUCCESSFULLY=1
+dotask finish_image

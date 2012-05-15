@@ -128,6 +128,14 @@ download_if_necessary() {
   [ -f $(basename "$1") ] || wget "$1"
 }
 
+finish_image() {
+  chmod -w $CURIMG &&
+  mkdir -p ../$OUTDIR &&
+  mv $CURIMG ../$OUTDIR &&
+  FINISHED_SUCCESSFULLY=1
+  printf "Completed script successfully\n"
+}
+
 die() {
   FMTSTR=$1
   shift
@@ -141,10 +149,11 @@ dotask() {
 
 FINISHED_SUCCESSFULLY=0
 CLEANED_UP=0
+WAS_TRAPPED=0
 
 # Sigh http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
-trap 'universal_cleanup"' EXIT
-trap 'universal_cleanup; trap - INT; kill -INT $$' INT
+trap 'WAS_TRAPPED=1; universal_cleanup' EXIT
+trap 'WAS_TRAPPED=1; universal_cleanup; trap - INT; kill -INT $$' INT
 
 universal_cleanup() {
   set +e
@@ -157,10 +166,7 @@ universal_cleanup() {
     [ -b "$BOOT_DEV" ] && sudo umount $ROOT_DEV
     [ -b "$NBD_DEV" ] && detach_image_from_nbd $NBD_DEV
   fi
-  CLEANED_UP=1
-  if [ $FINISHED_SUCCESSFULLY -eq 1 ]; then
-    printf "Completed script successfully\n"
-  else
+  if [ $WAS_TRAPPED -eq 1 ]; then
     printf "Did not complete script successfully\n"
   fi
   set -e

@@ -126,7 +126,6 @@ configure_udev() {
 EOF
 }
 
-OLDDIR=$(pwd)
 cd $WORKDIR
 dotask branch_image ../$OUTDIR/stage0.qed $CURIMG
 dotask download_if_necessary http://landley.net/aboriginal/downloads/binaries/simple-root-filesystem/simple-root-filesystem-armv6l.tar.bz2
@@ -143,7 +142,4 @@ dotask run_qemu $CURIMG
 dotask do_second_stage_debootstrap
 dotask configure_udev
 dotask shutdown_qemu
-chmod -w $CURIMG
-cd "$OLDDIR"
-mv $WORKDIR/$CURIMG $OUTDIR
-FINISHED_SUCCESSFULLY=1
+dotask finish_image

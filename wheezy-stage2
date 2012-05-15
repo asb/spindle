@@ -55,7 +55,6 @@ download_and_extract_firmware_if_necessary() {
   fi
 }
 
-OLDDIR=$(pwd)
 cd $WORKDIR
 dotask branch_image ../$OUTDIR/stage1.qed $CURIMG
 dotask run_qemu $CURIMG
@@ -82,7 +81,4 @@ sudo touch rootfs/etc/mtab # let mount handle mtab. TODO: test with df this does
 # Don't rename eth0 when we put card in a new board
 dotask sudo sed -i -e 's/KERNEL\!="eth\*|/KERNEL\!="/' rootfs/lib/udev/rules.d/75-persistent-net-generator.rules
 universal_cleanup
-chmod -w $CURIMG
-cd "$OLDDIR"
-mv $WORKDIR/$CURIMG $OUTDIR
-FINISHED_SUCCESSFULLY=1
+dotask finish_image

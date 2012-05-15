@@ -58,7 +58,6 @@ apt-get clean
 EOF
 }
 
-OLDDIR=$(pwd)
 cd $WORKDIR
 dotask branch_image ../$OUTDIR/stage4-lxde.qed $CURIMG
 dotask run_qemu $CURIMG
@@ -68,7 +67,4 @@ dotask install_scratch
 dotask save_space_using_hardlink
 dotask allow_starting_services
 dotask shutdown_qemu
-chmod -w $CURIMG
-cd "$OLDDIR"
-mv $WORKDIR/$CURIMG $OUTDIR
-FINISHED_SUCCESSFULLY=1
+dotask finish_image

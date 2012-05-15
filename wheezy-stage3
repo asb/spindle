@@ -190,7 +190,6 @@ set_default_kernel_modules() {
 EOF
 }
 
-OLDDIR=$(pwd)
 cd $WORKDIR
 dotask branch_image ../$OUTDIR/stage2.qed $CURIMG
 dotask run_qemu $CURIMG
@@ -209,7 +208,4 @@ dotask allow_starting_services
 dotask remove_ssh_host_keys
 dotask shutdown_qemu
 dotask set_default_kernel_modules
-chmod -w $CURIMG
-cd "$OLDDIR"
-mv $WORKDIR/$CURIMG $OUTDIR
-FINISHED_SUCCESSFULLY=1
+dotask finish_image
