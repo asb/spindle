@@ -4,7 +4,9 @@
 spindle is a set of scripts to aid building and working on a distribution 
 image. I've been using this tool to generate Debian wheezy images for the 
 Raspberry Pi, with the aim of producing reproducible, unbooted, clean setups 
-that require no manual intervention.
+that require no manual intervention. It works by producing a series of image 
+files in QEMU's QED format (I exploit the format's support for backing files 
+and copy on write).
 
 It's not massively user friendly yet, but hopefully that should soon change 
 (and of course, patches are welcome).
@@ -28,7 +30,26 @@ ifplugd, sudo).
 other packages.
 
 ## Getting started
-TODO
+The following describes how to start building SD card images using spindle.  
+The process isn't massively user friendly for people with no experience at 
+all, but if you're currently doing this by hand then hopefully you'll find it 
+helpful.
+
+    sudo ./setup_spindle_environment  my_spindle_chroot
+    cd my_spindle_chroot
+    sudo modprobe nbd sudo modprobe nbd max_part=16
+    schroot -c spindle
+    ./wheezy-stage0
+    ./wheezy-stage1
+    ./wheezy-stage2
+    ./wheezy-stage3
+    ./wheezy-stage4-lxde
+    ./common export_image_for_release out/stage4-lxde.qed stage4-lxde.img
+
+Now you can write stage4-lxde.img to SD card.
+
+Take a look at `wheezy-stage4-lxde` to see how to add your own stage if you 
+want further customisation.
 
 ## HACKING
 If you want to contribute, please do file issues on the bug tracker or send in 
