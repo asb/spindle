@@ -11,6 +11,11 @@ and copy on write).
 It's not massively user friendly yet, but hopefully that should soon change 
 (and of course, patches are welcome).
 
+## Project links
+* [Home](http://asbradbury.org/projects/spindle/)
+* [Source](https://github.com/asb/spindle)
+* [Issues](https://github.com/asb/spindle/issues)
+
 ## Current scripts
 * `setup_spindle_environment`: Sets up an schroot using wheezy and installs 
 the pre-requisites needed for spindle (mainly QEMU, as it turns out I haven't 
@@ -65,3 +70,11 @@ Good resources for shell scripting include:
 * [The POSIX standard](http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html)
 * [Insufficiently known POSIX shell features](http://apenwarr.ca/log/?m=201102#28)
 * [Common shell scripting mistakes](http://www.pixelbeat.org/programming/shell_script_mistakes.html)
+
+## License
+MIT. See the LICENSE file.
+
+## Contact
+Author: Alex Bradbury  
+Email: <asb@asbradbury.org>  
+Homepage: <http://asbradbury.org/>
