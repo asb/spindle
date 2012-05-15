@@ -41,7 +41,6 @@ all, but if you're currently doing this by hand then hopefully you'll find it
 helpful.
 
     sudo ./setup_spindle_environment  my_spindle_chroot
-    cd my_spindle_chroot
     sudo modprobe nbd sudo modprobe nbd max_part=16
     schroot -c spindle
     ./wheezy-stage0
