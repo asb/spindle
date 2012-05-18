@@ -136,7 +136,7 @@ finish_image() {
   printf "Completed script successfully\n"
 }
 
-# Usage: ask_yn default prompt
+# Usage: ask_yn default prompt [printf_args...]
 # Read a Yes / No user response. If $ASK_YN_USE_DEFAULT is set, assume the 
 # default. Return of 0 indicates a yes, and non-zero is no.
 ask_yn() {
@@ -146,10 +146,13 @@ ask_yn() {
     n*|N*) OPT="y/N"; RET=1;;
     *) die "Programmer error: invalid argument to ask_yn"
   esac
+  shift
   if [ "$ASK_YN_USE_DEFAULT" ]; then
     return $RET
   else
-    printf "$2 [$OPT]: " && read YN
+    PROMPT=$1
+    shift
+    printf "$PROMPT [$OPT]: " "$@" && read YN
     case "$YN" in
       y*|Y*) return 0;;
       n*|N*) return 1;;
@@ -193,9 +196,3 @@ universal_cleanup() {
   fi
   set -e
 }
-
-
-if [ $# -ne 0 ]; then
-  set -x
-  "$@"
-fi
