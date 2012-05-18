@@ -5,22 +5,10 @@
 
 set -e
 
-FINISHED_SUCCESSFULLY=0
-
-# Sigh, won't get called in dash at ctrl-c http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
-trap '[ $FINISHED_SUCCESSFULLY -eq 0 ] && echo "Failed to complete" || echo "Completed successfully"' EXIT
-
 if [ $(id -u) -ne 0 ]; then
   printf "Script must be run as root\n"
   exit 1
 fi
-
-die() {
-  FMTSTR=$1
-  shift
-  printf "Died: $FMTSTR\n" "$@" >&2
-  exit 1
-}
 
 show_usage() {
   printf "./setup_spindle_environment DIRNAME\n"
@@ -28,13 +16,12 @@ show_usage() {
 
 [ "$1" ] || show_usage
 TARGET_DIR=$(readlink -m "$1")
-: ${DEB_MIRROR:=http://ftp.uk.debian.org/debian/}
+
+. ./common
 
 apt-get install schroot || die "Failed to install schroot"
 
-printf "About to set up chroot in '%s'. Ok? [y/n]: " "$TARGET_DIR"
-read YN
-[ "$YN" = "y" ] || die "You said no. Exiting"
+ask_yn y "About to set up chroot in '%s'. Ok?" "$TARGET_DIR" || die "You said no. Exiting"
 printf "What users should be able to schroot (comma-separated): "
 read USERS
 [ -z "$USERS" ] && die "You didn't list any users"
@@ -42,8 +29,7 @@ read USERS
 SCHROOT_SPINDLE_CONF=/etc/schroot/chroot.d/spindle.conf
 
 if [ -e "$SCHROOT_SPINDLE_CONF" ]; then
-  printf "Overwrite existing config '%s'? [y/n]: " "$SCHROOT_SPINDLE_CONF"
-  read YN && [ "$YN" = "y" ] || exit
+  ask_yn y "Overwrite existing config '$SCHROOT_SPINDLE_CONF'?" || die "You said no. Exiting"
 fi
 
 mkdir -p $(dirname "$SCHROOT_SPINDLE_CONF")
