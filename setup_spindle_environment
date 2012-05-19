@@ -22,8 +22,7 @@ TARGET_DIR=$(readlink -m "$1")
 apt-get install schroot || die "Failed to install schroot"
 
 ask_yn y "About to set up chroot in '%s'. Ok?" "$TARGET_DIR" || die "You said no. Exiting"
-printf "What users should be able to schroot (comma-separated): "
-read USERS
+read_val USERS "${USERS-$SUDO_USER}" "What users should be able to schroot? (comma-separated)"
 [ -z "$USERS" ] && die "You didn't list any users"
 
 SCHROOT_SPINDLE_CONF=/etc/schroot/chroot.d/spindle.conf

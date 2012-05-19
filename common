@@ -161,6 +161,17 @@ ask_yn() {
   fi
 }
 
+# Usage: read_val var default prompt [printf_args...]
+read_val() {
+  RV_VAR=$1
+  RV_DEFAULT=$2
+  RV_PROMPT=$3
+  shift 3
+  printf "$RV_PROMPT [$RV_DEFAULT]: " "$@" && read RV_VAL
+  [ -z "$RV_VAL" ] && RV_VAL=$RV_DEFAULT
+  eval "$RV_VAR=\$RV_VAL"
+}
+
 die() {
   FMTSTR=$1
   shift
