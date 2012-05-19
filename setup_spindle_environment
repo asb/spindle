@@ -14,12 +14,18 @@ show_usage() {
   printf "./setup_spindle_environment DIRNAME\n"
 }
 
+ensure_installed() {
+  for PKG in "$@"; do
+    dpkg -l "$PKG" | grep -q ^ii || apt-get install "$PKG" || die "Failed to install $PKG"
+  done
+}
+
 [ "$1" ] || show_usage
 TARGET_DIR=$(readlink -m "$1")
 
 . ./common
 
-apt-get install schroot || die "Failed to install schroot"
+ensure_installed schroot debootstrap
 
 ask_yn y "About to set up chroot in '%s'. Ok?" "$TARGET_DIR" || die "You said no. Exiting"
 read_val USERS "${USERS-$SUDO_USER}" "What users should be able to schroot? (comma-separated)"
