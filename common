@@ -179,9 +179,28 @@ die() {
   exit 1
 }
 
+# do a task
+# Inspects $DOTASK_MODE to see if the user:
+#   e*: wants to have the command echoed
+#   q*: wants to be questioned as to whether to run, skip or quit.
+# If the task fails it asks the user whether to quit (default: y), or if 
+# $DOTASK_QUIT_ON_FAILURE is set then quit without asking the user.
 dotask() {
-  "$@" || die "Failed while performing task: %s" "$*"
+  case "$DOTASK_MODE" in
+    e*) printf "Run: '%s'\n" "$*"; false;;
+    q*) printf "Run: '%s' [Y/n/q] ? " "$*" && read SHOULD_RUN;
+        case "$SHOULD_RUN" in
+          n*|N*|s*|S*)  printf "Skip '%s'\n" "$*";;
+          q*|Q*)        die "Exit at user request";;
+          *)            false;;
+        esac;;
+    *)  false;;
+  esac || "$@" || { RC=$?
+    [ -z "$DOTASK_QUIT_ON_FAILURE" ] && printf "'%s' failed (returned $RC) - Quit? [Y/n] : " "$*" && read YN
+    case "$YN" in n*|N*) true ;; *) die "Failed while performing task: %s" "$*";; esac;
+  }
 }
+
 
 FINISHED_SUCCESSFULLY=0
 CLEANED_UP=0
