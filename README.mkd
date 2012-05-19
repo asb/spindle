@@ -48,7 +48,7 @@ helpful.
     ./wheezy-stage2
     ./wheezy-stage3
     ./wheezy-stage4-lxde
-    ./common export_image_for_release out/stage4-lxde.qed stage4-lxde.img
+    ./helper export_image_for_release out/stage4-lxde.qed stage4-lxde.img
 
 Now you can write stage4-lxde.img to SD card.
 
@@ -60,11 +60,12 @@ If you want to contribute, please do file issues on the bug tracker or send in
 patches/pull requests.
 
 spindle is written in POSIX shell script and tries to make use of QEMU where 
-possible for manipulating the filesystem of the target beging generated. Look 
+possible for manipulating the filesystem of the target being generated. Look 
 at the current scripts for examples. Please do talk to me if you're thinking 
 of any large refactoring.
 
 Good resources for shell scripting include:
+
 * `man dash`
 * [The POSIX standard](http://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html)
 * [Insufficiently known POSIX shell features](http://apenwarr.ca/log/?m=201102#28)
