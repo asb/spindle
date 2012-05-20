@@ -15,8 +15,8 @@ install_packages() {
 apt-get update
 apt-get install --no-install-recommends -y xserver-xorg-video-fbdev
 apt-get install --no-install-recommends -y xserver-xorg xinit
-apt-get install --no-install-recommends -y midori lxde lxtask menu-xdg
-apt-get install -y mupdf gtk2-engines gksu
+apt-get install --no-install-recommends -y midori lxde lxtask menu-xdg gksu
+apt-get install -y mupdf gtk2-engines
 apt-get install -y netsurf-gtk zenity lxmusic
 apt-get install -y --no-install-recommends xdg-utils
 apt-get install -y desktop-base
