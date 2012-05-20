@@ -132,7 +132,7 @@ finish_image() {
   chmod -w $CURIMG &&
   mkdir -p ../$OUTDIR &&
   mv $CURIMG ../$OUTDIR &&
-  FINISHED_SUCCESSFULLY=1
+  FINISHED_SUCCESSFULLY=1 &&
   printf "Completed script successfully\n"
 }
 
