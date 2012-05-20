@@ -17,8 +17,7 @@ apt-get install --no-install-recommends -y xserver-xorg-video-fbdev
 apt-get install --no-install-recommends -y xserver-xorg xinit
 apt-get install --no-install-recommends -y midori lxde lxtask menu-xdg gksu
 apt-get install -y mupdf gtk2-engines
-apt-get install -y netsurf-gtk zenity lxmusic
-apt-get install -y --no-install-recommends xdg-utils
+apt-get install -y --no-install-recommends netsurf-gtk zenity lxmusic xdg-utils
 apt-get install -y desktop-base
 apt-get clean
 EOF
