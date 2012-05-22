@@ -173,7 +173,7 @@ EOF
 
 add_qt5_apt_source() {
   onvm_chroot sh -l -e <<\EOF
-echo "deb http://archive.qmh-project.org/rpi/debian/ unstable main" >> /etc/apt/sources.list.d/qt5pi.list
+echo "deb http://archive.qmh-project.org/rpi-wheezy/debian/ unstable main" >> /etc/apt/sources.list.d/qt5pi.list
 apt-get update
 EOF
 }

@@ -45,9 +45,10 @@ EOF
 }
 
 install_qt5() {
+  # TODO: temporarily had to disable installing the examples packages
   onvm_chroot sh -l -e <<\EOF
 apt-get update
-apt-get install --allow-unauthenticated -y qt50-snapshot qt50-quick-particle-examples qt50-quick-presentation-framework
+apt-get install --allow-unauthenticated -y qt50-snapshot # qt50-quick-particle-examples qt50-quick-presentation-framework
 apt-get clean
 EOF
 }
