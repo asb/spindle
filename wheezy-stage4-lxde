@@ -19,7 +19,6 @@ apt-get install --no-install-recommends -y midori lxde lxtask menu-xdg gksu
 apt-get install -y mupdf gtk2-engines
 apt-get install -y --no-install-recommends netsurf-gtk zenity lxmusic xdg-utils
 apt-get install -y desktop-base
-apt-get clean
 EOF
 }
 
@@ -48,13 +47,13 @@ install_qt5() {
   onvm_chroot sh -l -e <<\EOF
 apt-get update
 apt-get install --allow-unauthenticated -y qt50-snapshot qt50-quick-particle-examples
-apt-get clean
 EOF
 }
 
 cd $WORKDIR
 dotask branch_image ../$OUTDIR/stage3.qed $CURIMG
 dotask run_qemu $CURIMG
+dotask mount_apt_cache
 dotask disable_starting_services
 dotask install_packages
 dotask configure_lxde

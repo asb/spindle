@@ -16,7 +16,6 @@ install_packages() {
 apt-get update
 apt-get install -y python idle python-pygame python-tk
 apt-get install -y python3 idle3 python3-tk
-apt-get clean
 EOF
 }
 
@@ -53,8 +52,6 @@ rm scratch-plugins*.deb
 dpkg -i scratch_*.deb || true
 apt-get install -f -y
 rm scratch_*.deb
-
-apt-get clean
 EOF
 }
 
@@ -62,6 +59,7 @@ cd $WORKDIR
 dotask branch_image ../$OUTDIR/stage4-lxde.qed $CURIMG
 dotask run_qemu $CURIMG
 dotask disable_starting_services
+dotask mount_apt_cache
 dotask install_packages
 dotask install_scratch
 dotask save_space_using_hardlink
