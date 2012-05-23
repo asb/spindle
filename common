@@ -22,7 +22,7 @@ ssh_in_to_qemu() {
 }
 
 scp_in_to_qemu() {
-  scp -i qemu_arm_key -P 22000 $1 root@localhost:$2
+  scp -i qemu_arm_key -P 22000 "$1" root@localhost:"$2"
 }
 
 onvm_chroot() {
