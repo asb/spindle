@@ -12,6 +12,7 @@ run_qemu() {
   mkfifo fifo.out fifo.in
   qemu-system-arm -M versatilepb -cpu arm1136-r2 -m 256 -nographic -no-reboot \
         -kernel zImage -hda qemu_rootfs.sqf -drive file=$1,index=1,media=disk,cache=unsafe \
+        -drive file=wheezy_apt_cache.qed,index=2,media=disk,cache=unsafe \
         -append "root=/dev/sda rw init=/sbin/init.sh panic=1 PATH=/bin:/sbin console=ttyAMA0 HOST=armv6l"\
         -net nic,model=rtl8139 -net user -redir tcp:22000::22 -daemonize -serial pipe:fifo \
         -pidfile qemu.pid
@@ -23,6 +24,10 @@ ssh_in_to_qemu() {
 
 scp_in_to_qemu() {
   scp -i qemu_arm_key -P 22000 "$1" root@localhost:"$2"
+}
+
+scp_r_from_qemu() {
+  scp -r -i qemu_arm_key -P 22000 root@localhost:"$1" "$2"
 }
 
 onvm_chroot() {
@@ -124,6 +129,12 @@ hardlink -t /usr/share/doc
 EOF
 }
 
+mount_apt_cache() {
+  ssh_in_to_qemu sh -e - <<EOF
+  mount -o noatime /dev/sdc /mnt/var/cache/apt
+EOF
+}
+
 download_if_necessary() {
   [ -f $(basename "$1") ] || wget "$1"
 }
@@ -218,7 +229,8 @@ universal_cleanup() {
     trap - EXIT
     [ -p fifo.in ] && shutdown_qemu
     [ -b "$BOOT_DEV" ] && sudo umount $BOOT_DEV
-    [ -b "$BOOT_DEV" ] && sudo umount $ROOT_DEV
+    [ -b "$ROOT_DEV" ] && sudo umount $ROOT_DEV
+    [ -b "$NBD_DEV" ] && sudo umount $NBD_DEV
     [ -b "$NBD_DEV" ] && detach_image_from_nbd $NBD_DEV
   fi
   if [ $WAS_TRAPPED -eq 1 ] && [ $FINISHED_SUCCESSFULLY -eq 0 ]; then
