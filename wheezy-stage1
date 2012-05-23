@@ -92,6 +92,7 @@ route add default gw 10.0.2.2
 mount -t tmpfs /tmp /tmp
 
 mount -o noatime /dev/sdb2 /mnt
+[ -d /mnt/tmp ] && mount --bind /tmp /mnt/tmp
 
 mount -t tmpfs /home /home
 mkdir -p /home/root
