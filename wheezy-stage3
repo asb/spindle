@@ -93,7 +93,7 @@ install_packages() {
 apt-get update
 # install some utils
 apt-get install -y ssh locales less fbset sudo psmisc strace module-init-tools ifplugd
-apt-get install -y console-setup keyboard-configuration
+apt-get install -y console-setup keyboard-configuration debconf-utils
 apt-get install -y libudev-dev libicu-dev build-essential python bash-completion
 apt-get install -y luajit lua5.1
 apt-get install -y hardlink
@@ -187,26 +187,6 @@ set_default_kernel_modules() {
   onvm_chroot sh -e - <<EOF
   printf 'snd-bcm2835\n' >> /etc/modules
 EOF
-}
-
-# Create a list of all installed packages, all manually installed packages and 
-# the debconf selections
-fingerprint_debian() {
-  FNGPRNT_DIR="$CURIMG.fingerprint" &&
-  onvm_chroot sh -l -e <<EOF &&
-apt-get update
-apt-get install debconf-utils
-mkdir -p "/tmp/$FNGPRNT_DIR"
-cd "/tmp/$FNGPRNT_DIR"
-dpkg --get-selections > dpkg_selections
-dpkg -l > dpkg_l
-apt-mark showauto > apt-mark_showauto
-debconf-get-selections > debconf_selections
-EOF
-  scp_r_from_qemu "/mnt/tmp/$FNGPRNT_DIR" . &&
-  cd "$FNGPRNT_DIR" &&
-  grep "[[:space:]]install$" dpkg_selections | cut -f1 | sort apt-mark_showauto - | uniq -u > manually_installed_packages &&
-  cd "$OLDPWD"
 }
 
 cd $WORKDIR

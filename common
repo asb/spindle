@@ -139,10 +139,31 @@ download_if_necessary() {
   [ -f $(basename "$1") ] || wget "$1"
 }
 
+# Create a list of all installed packages, all manually installed packages and 
+# the debconf selections
+fingerprint_debian() {
+  FNGPRNT_DIR="$CURIMG.fingerprint" &&
+  onvm_chroot sh -l -e <<EOF &&
+mkdir -p "/tmp/$FNGPRNT_DIR"
+cd "/tmp/$FNGPRNT_DIR"
+dpkg --get-selections > dpkg_selections
+dpkg -l > dpkg_l
+apt-mark showauto > apt-mark_showauto
+debconf-get-selections > debconf_selections
+EOF
+  scp_r_from_qemu "/mnt/tmp/$FNGPRNT_DIR" . &&
+  cd "$FNGPRNT_DIR" &&
+  grep "[[:space:]]install$" dpkg_selections | cut -f1 | sort apt-mark_showauto - | uniq -u > manually_installed_packages &&
+  cd "$OLDPWD"
+}
+
 finish_image() {
   chmod -w $CURIMG &&
   mkdir -p ../$OUTDIR &&
   mv $CURIMG ../$OUTDIR &&
+  if [ -d "$CURIMG.fingerprint" ]; then
+    mv "$CURIMG.fingerprint" ../$OUTDIR
+  fi &&
   FINISHED_SUCCESSFULLY=1 &&
   printf "Completed script successfully\n"
 }
