@@ -177,9 +177,10 @@ apt-get update
 EOF
 }
 
-adjust_swappiness() {
+adjust_sysctl() {
   onvm_chroot sh -l -e <<\EOF
   printf "\n# rpi tweaks\nvm.swappiness=1\n" >> /etc/sysctl.conf
+  printf "vm.min_free_kbytes = 8192\n" >> /etc/sysctl.conf
 EOF
 }
 
@@ -203,7 +204,7 @@ dotask setup_sudoers
 dotask fiddle_default_PATH
 dotask save_space_using_hardlink
 dotask add_qt5_apt_source
-dotask adjust_swappiness
+dotask adjust_sysctl
 dotask allow_starting_services
 dotask remove_ssh_host_keys
 dotask set_default_kernel_modules
