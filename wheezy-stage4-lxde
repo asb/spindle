@@ -43,6 +43,16 @@ sed "$PCMANFMCFG" -i -e 's/^su_cmd.*/su_cmd=gksu %s/'
 EOF
 }
 
+install_and_configure_lightdm() {
+  onvm_chroot sh -l -e <<\EOF
+  apt-get install -y lightdm gnome-themes-standard gnome-icon-theme
+  update-rc.d lightdm disable 2
+  sed -i /etc/lightdm/lightdm-gtk-greeter.conf -e "s/^background.*/background=#ffffff/"
+  # TODO: maybe change the computer icon to the Raspberry Pi logo? See 
+  # https://wiki.archlinux.org/index.php/LightDM#Changing_the_Icon
+EOF
+}
+
 install_qt5() {
   onvm_chroot sh -l -e <<\EOF
 apt-get update
@@ -57,6 +67,7 @@ dotask mount_apt_cache
 dotask disable_starting_services
 dotask install_packages
 dotask configure_lxde
+dotask install_and_configure_lightdm
 dotask install_qt5
 dotask save_space_using_hardlink
 dotask allow_starting_services
