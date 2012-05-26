@@ -19,7 +19,7 @@ show_usage() {
 
 ensure_installed() {
   for PKG in "$@"; do
-    dpkg -l "$PKG" | grep -q ^ii || apt-get install "$PKG" || die "Failed to install $PKG"
+    dpkg --get-selections "$PKG" | grep -q "[[:space:]]install$" || apt-get install "$PKG" || die "Failed to install $PKG"
   done
 }
 
