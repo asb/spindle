@@ -162,6 +162,7 @@ finish_image() {
   mkdir -p ../$OUTDIR &&
   mv $CURIMG ../$OUTDIR &&
   if [ -d "$CURIMG.fingerprint" ]; then
+    rm -rf "../$OUTDIR/$CURIMG.fingerprint" &&
     mv "$CURIMG.fingerprint" ../$OUTDIR
   fi &&
   FINISHED_SUCCESSFULLY=1 &&
