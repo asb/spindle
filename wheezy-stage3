@@ -17,6 +17,8 @@ debconf-set-selections <<SELEOF
 # System's default wordlist:
 # Choices: english (Webster's Second International English wordlist), Manual symlinks setting
 dictionaries-common	dictionaries-common/default-wordlist	select	english (Webster's Second International English wordlist)
+# Use Control+Alt+Backspace to terminate the X server?
+keyboard-configuration keyboard-configuration/ctrl_alt_bksp boolean true
 # Backend to use for TrueType handling on X:
 # Choices: freetype, xtt
 x-ttcidfont-conf	x-ttcidfont-conf/tt_backend	select	freetype
@@ -52,13 +54,14 @@ x11-common	x11-common/xwrapper/allowed_users	select	Console Users Only
 keyboard-configuration	keyboard-configuration/compose	select	No compose key
 # Country of origin for the keyboard:
 # Choices: <SNIP>
-keyboard-configuration	keyboard-configuration/layout	select	United Kingdom
+keyboard-configuration  keyboard-configuration/layout select English (UK)
+# for internal use
+keyboard-configuration  keyboard-configuration/layoutcode string gb
 # Keymap to use:
-# Choices: American English, Belarusian, Belgian, Brazilian (ABNT2 layout), Brazilian (EUA layout), British English, Bulgarian, Bulgarian (phonetic layout), Canadian French, Canadian Multilingual, Croatian, Czech, Danish, Dutch, Dvorak, Estonian, Finnish, French, German, Greek, Hebrew, Hungarian, Icelandic, Italian, Japanese, Kirghiz, Latin American, Latvian, Lithuanian, Macedonian, Norwegian, Polish, Portuguese, Romanian, Russian, Serbian (Cyrillic), Slovakian, Slovene, Spanish, Swedish, Swiss French, Swiss German, Thai, Turkish (F layout), Turkish (Q layout), Ukrainian
+# Choices: <SNIP>
 keyboard-configuration	keyboard-configuration/xkb-keymap	select	British English
-# Keyboard layout:
-# Choices: United Kingdom, United Kingdom - Colemak, United Kingdom - Dvorak, United Kingdom - Dvorak (UK Punctuation), United Kingdom - Extended - Winkeys, United Kingdom - International (with dead keys), United Kingdom - Macintosh, Other
-keyboard-configuration	keyboard-configuration/variant	select	United Kingdom
+# Choices: English (UK), English (UK) - English (UK\, Colemak), English (UK) - English (UK\, Dvorak), English (UK) - English (UK\, Dvorak with UK punctuation), English (UK) - English (UK\, extended WinKeys), English (UK) - English (UK\, international with dead keys), English (UK) - English (UK\, Macintosh), English (UK) - English (UK\, Macintosh international), Other
+keyboard-configuration  keyboard-configuration/variant select English (UK)
 # Geographic area:
 # Choices: Africa, America, Antarctica, Australia, Arctic, Asia, Atlantic, Europe, Indian, Pacific, SystemV, US, Etc
 tzdata	tzdata/Areas	select	Etc
@@ -82,7 +85,7 @@ tasksel	tasksel/desktop	multiselect	xfce
 keyboard-configuration	keyboard-configuration/altgr	select	The default for the keyboard layout
 # Default locale for the system environment:
 # Choices: None, en_GB.UTF-8
-locales	locales/default_environment_locale	select	en_GB.UTF-8
+locales	locales/default_environment_locale select	en_GB.UTF-8
 SELEOF
 EOF
 }
