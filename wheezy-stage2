@@ -12,8 +12,7 @@ CURIMG=stage2.qed
 # For now we add a root user (this is a totally minimal system). It should be 
 # disabled at a later stage
 configure_users() {
-  ssh_in_to_qemu chroot /mnt sh -ex - <<EOF
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  onvm_chroot sh -l -ex - <<EOF
 adduser --disabled-password --gecos "" pi
 echo "pi:raspberry" | chpasswd
 echo "root:root" | chpasswd
@@ -21,34 +20,58 @@ EOF
 }
 
 configure_fstab() {
-  cat <<EOF | sudo tee rootfs/etc/fstab
+  onvm_chroot sh -l -e - <<EOF1
+cat <<EOF2 > /etc/fstab
 proc            /proc           proc    defaults          0       0
 /dev/mmcblk0p1  /boot           vfat    defaults          0       0
 /dev/mmcblk0p2  /               ext4    defaults,noatime  0       0
 /dev/mmcblk0p3  none            swap    sw                0       0
-EOF
+EOF2
+EOF1
 }
 
 configure_sources_list() {
-  cat <<EOF | sudo tee rootfs/etc/apt/sources.list
-deb $DEB_MIRROR wheezy main non-free
+  onvm_chroot sh -l -e - <<EOF
+  printf "deb $DEB_MIRROR wheezy main non-free\n" > /etc/apt/sources.list
 EOF
 }
 
 configure_network_interfaces() {
-  cat <<EOF | sudo tee rootfs/etc/network/interfaces
+  onvm_chroot sh -l -e - <<EOF1
+cat <<EOF2 > /etc/network/interfaces
 auto lo
 
 iface lo inet loopback
 iface eth0 inet dhcp
-EOF
+EOF2
+EOF1
 }
 
 configure_hostname() {
-  sudo sh -c "echo raspberrypi > rootfs/etc/hostname" &&
-  sudo sh -c 'printf "127.0.1.1\traspberrypi\n" >> rootfs/etc/hosts'
+  onvm_chroot sh -l -e - <<EOF
+echo raspberrypi > /etc/hostname
+printf "127.0.1.1\traspberrypi\n" >> /etc/hosts
+EOF
 }
 
+disable_eth_renaming() {
+  onvm_chroot sh -l -e - <<EOF
+sed -i -e 's/KERNEL\!="eth\*|/KERNEL\!="/' /lib/udev/rules.d/75-persistent-net-generator.rules
+EOF
+}
+
+install_firmware() {
+  onvm_chroot sh -l -e - <<EOF
+echo "deb http://asbradbury.org/tmp/raspi/tmp_repo wheezy main" > /etc/apt/sources.list.d/raspi.list
+apt-get update
+apt-get install --allow-unauthenticated -y libraspberrypi-bin libraspberrypi0 raspberrypi-bootloader
+cp -a /boot/arm192_start.elf /boot/start.elf # default to 129mb memory split
+echo "dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 \
+console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait" > /boot/cmdline.txt
+EOF
+}
+
+# Deprecated in favour of using the Debian packaging
 download_and_extract_firmware_if_necessary() {
   if ! [ -d firmware ]; then
     git clone git://github.com/raspberrypi/firmware.git
@@ -58,27 +81,26 @@ download_and_extract_firmware_if_necessary() {
 cd $WORKDIR
 dotask branch_image ../$OUTDIR/stage1.qed $CURIMG
 dotask run_qemu $CURIMG
+dotask mount_apt_cache
+dotask disable_starting_services
 dotask configure_users
+dotask configure_fstab
+dotask configure_sources_list
+dotask configure_network_interfaces
+dotask configure_hostname
+dotask disable_eth_renaming
+dotask install_firmware
+dotask allow_starting_services
 dotask shutdown_qemu
-dotask download_and_extract_firmware_if_necessary
+#dotask download_and_extract_firmware_if_necessary
 sudo -v
+# We have to copy the /boot from root partition to boot partition. Temporary 
+# hack
 dotask attach_image_to_nbd $CURIMG $NBD_DEV
 mkdir -p boot
 dotask sudo mount $BOOT_DEV boot
 mkdir -p rootfs
 dotask sudo mount $ROOT_DEV rootfs
-dotask configure_fstab
-dotask configure_sources_list
-dotask configure_network_interfaces
-dotask configure_hostname
-dotask sudo cp -a firmware/modules rootfs/lib
-dotask sudo cp -a firmware/opt/* rootfs/opt
-dotask sudo cp -r firmware/boot/* boot
-dotask sudo cp -a boot/arm192_start.elf boot/start.elf # default to 192mb memory split
-echo "dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 \
-console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait" | sudo tee boot/cmdline.txt
-sudo touch rootfs/etc/mtab # let mount handle mtab. TODO: test with df this does as desired
-# Don't rename eth0 when we put card in a new board
-dotask sudo sed -i -e 's/KERNEL\!="eth\*|/KERNEL\!="/' rootfs/lib/udev/rules.d/75-persistent-net-generator.rules
+dotask sudo mv rootfs/boot/* boot
 universal_cleanup
 dotask finish_image
