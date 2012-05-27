@@ -160,7 +160,7 @@ EOF
 finish_image() {
   chmod -w $CURIMG &&
   mkdir -p ../$OUTDIR &&
-  mv $CURIMG ../$OUTDIR &&
+  mv -f $CURIMG ../$OUTDIR &&
   if [ -d "$CURIMG.fingerprint" ]; then
     rm -rf "../$OUTDIR/$CURIMG.fingerprint" &&
     mv "$CURIMG.fingerprint" ../$OUTDIR
