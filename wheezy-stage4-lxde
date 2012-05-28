@@ -24,12 +24,8 @@ EOF
 
 install_wayland() {
   onvm_chroot sh -l -e - <<\EOF
-WLVER='0.85.0~git20120508'
-wget "http://asbradbury.org/tmp/raspi/wayland/libwayland0_${WLVER}_armel.deb"
-wget "http://asbradbury.org/tmp/raspi/wayland/libwayland-dev_${WLVER}_armel.deb"
-dpkg -i libwayland* || true
-apt-get install -y -f
-dpkg -i libwayland* # Really horrible hack. I screwed up the temporary packaging ;)
+apt-get update
+apt-get install -y --allow-unauthenticated libwayland0 libwayland-dev
 EOF
 }
 
