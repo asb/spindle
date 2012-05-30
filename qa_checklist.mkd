@@ -24,3 +24,6 @@ invocation of sshd
 * Wireless dongles with free firmware work out of the box
 * The default browser works for GMail and other JavaScript-heavy sites
 * `/opt/vc/bin/tvservice` has been verified to work
+* Verify after installing gparted it can be launched from the graphical menu 
+and that in pcmanfm 'open folder as root' works (checks PolicyKit 
+configuration).
