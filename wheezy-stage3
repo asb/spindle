@@ -104,7 +104,7 @@ apt-get install -y fake-hwclock ntp
 apt-get install -y --allow-unauthenticated libraspberrypi-dev libraspberrypi-doc
 /etc/init.d/fake-hwclock stop # save current time
 update-rc.d hwclock.sh disable
-update-rc.d hwclockfirst.sh disable
+insserv -r hwclockfirst.sh
 EOF
 }
 
@@ -165,6 +165,14 @@ setup_sudoers() {
 EOF
 }
 
+# We use a swap file rather than a swap partition for greater flexibility
+setup_swap() {
+  onvm_chroot sh -l -e - <<EOF
+apt-get install dphys-swapfile
+echo "CONF_SWAPSIZE=100" > /etc/dphys-swapfile
+EOF
+}
+
 # It's not to have the sbin dirs in $PATH as that gives us ifconfig
 fiddle_default_PATH() {
   # This sed match is clearly brittle and specific to the current debian 
@@ -206,6 +214,7 @@ dotask configure_ifplugd
 dotask add_pi_user_to_groups
 #dotask add_opt_vc_lib_to_ld_so
 dotask setup_sudoers
+dotask setup_swap
 dotask fiddle_default_PATH
 dotask save_space_using_hardlink
 dotask add_qt5_apt_source

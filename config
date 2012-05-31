@@ -7,7 +7,6 @@ DEB_MIRROR=http://ftp.uk.debian.org/debian
 NBD_DEV=/dev/nbd0
 BOOT_DEV="$NBD_DEV"p1
 ROOT_DEV="$NBD_DEV"p2
-SWAP_DEV="$NBD_DEV"p3
 
 # Changing these isn't currently supported
 WORKDIR=work
