@@ -69,7 +69,7 @@ EOF
 
 # We want rbind of /home for cases where /home is provided by autofs
 # See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=648459
-sed $ETC_SCHROOT_SPINDLE/fstab -e "s|^\(/home.*\)bind\(.*\)|\1rbind\2|" > $ETC_SCHROOT_SPINDLE/fstab.new || true
+sed $ETC_SCHROOT_SPINDLE/fstab -e "s|^\(/home.*\),bind\(.*\)|\1,rbind\2|" > $ETC_SCHROOT_SPINDLE/fstab.new || true
 mv $ETC_SCHROOT_SPINDLE/fstab.new $ETC_SCHROOT_SPINDLE/fstab || true
 
 debootstrap \
