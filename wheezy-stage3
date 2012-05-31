@@ -104,7 +104,6 @@ apt-get install -y fake-hwclock ntp
 apt-get install -y --allow-unauthenticated libraspberrypi-dev libraspberrypi-doc
 /etc/init.d/fake-hwclock stop # save current time
 update-rc.d hwclock.sh disable
-insserv -r hwclockfirst.sh
 EOF
 }
 
