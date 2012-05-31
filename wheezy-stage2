@@ -60,6 +60,14 @@ sed -i -e 's/KERNEL\!="eth\*|/KERNEL\!="/' /lib/udev/rules.d/75-persistent-net-g
 EOF
 }
 
+# Due to a change of behaviour in getty, we must pass --noclear to ensure our 
+# boot messages don't get cleared
+keep_boot_messages() {
+  onvm_chroot sh -l -e - <<\EOF
+sed -i -e "s/^\(1:2345.*\)getty\(.*tty1\)$/\1getty --noclear\2/" /etc/inittab
+EOF
+}
+
 install_firmware() {
   onvm_chroot sh -l -e - <<EOF
 echo "deb http://asbradbury.org/tmp/raspi/tmp_repo wheezy main" > /etc/apt/sources.list.d/raspi.list
@@ -89,6 +97,7 @@ dotask configure_sources_list
 dotask configure_network_interfaces
 dotask configure_hostname
 dotask disable_eth_renaming
+dotask keep_boot_messages
 dotask install_firmware
 dotask allow_starting_services
 dotask shutdown_qemu
