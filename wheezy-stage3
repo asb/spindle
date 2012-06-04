@@ -99,7 +99,7 @@ apt-get install -y ssh locales less fbset sudo psmisc strace module-init-tools i
 apt-get install -y console-setup keyboard-configuration debconf-utils parted
 apt-get install -y libudev-dev libicu-dev build-essential python bash-completion
 apt-get install -y luajit lua5.1
-apt-get install -y hardlink
+apt-get install -y hardlink ca-certificates
 apt-get install -y fake-hwclock ntp
 apt-get install -y --allow-unauthenticated libraspberrypi-dev libraspberrypi-doc
 /etc/init.d/fake-hwclock stop # save current time
