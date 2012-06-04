@@ -74,7 +74,7 @@ apt-get update
 apt-get install --allow-unauthenticated -y libraspberrypi-bin libraspberrypi0 raspberrypi-bootloader
 cp -a /boot/arm192_start.elf /boot/start.elf # default to 129mb memory split
 echo "dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 \
-console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait" > /boot/cmdline.txt
+root=/dev/mmcblk0p2 rootfstype=ext4 rootwait" > /boot/cmdline.txt
 EOF
 }
 
