@@ -193,6 +193,8 @@ adjust_sysctl() {
   onvm_chroot sh -l -e <<\EOF
   printf "\n# rpi tweaks\nvm.swappiness=1\n" >> /etc/sysctl.conf
   printf "vm.min_free_kbytes = 8192\n" >> /etc/sysctl.conf
+  # Only print important messages to console
+  sed /etc/sysctl.conf -i -e "s/\#kernel\.printk/kernel.printk/"
 EOF
 }
 
