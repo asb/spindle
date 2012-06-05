@@ -51,6 +51,20 @@ sed "$PCMANFMCFG" -i -e 's/^su_cmd.*/su_cmd=pkexec %s/'
 EOF
 }
 
+setup_automounting() {
+  onvm_chroot sh -l -e <<\EOF1
+apt-get install -y udisks
+cat <<EOF2 > /etc/polkit-1/localauthority/50-local.d/55-storage.pkla
+[Storage Permissions]
+Identity=unix-group:plugdev
+Action=org.freedesktop.udisks.filesystem-mount;org.freedesktop.udisks.drive-eject;org.freedesktop.udisks.drive-detach;org.freedesktop.udisks.luks-unlock;org.freedesktop.udisks.inhibit-polling;org.freedesktop.udisks.drive-set-spindown
+ResultAny=yes
+ResultActive=yes
+ResultInactive=no
+EOF2
+EOF1
+}
+
 install_and_configure_lightdm() {
   onvm_chroot sh -l -e <<\EOF
   apt-get install -y lightdm gnome-themes-standard gnome-icon-theme
@@ -76,6 +90,7 @@ dotask disable_starting_services
 dotask install_wayland
 dotask install_packages
 dotask configure_lxde
+dotask setup_automounting
 dotask install_and_configure_lightdm
 dotask install_qt5
 dotask save_space_using_hardlink

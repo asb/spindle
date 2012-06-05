@@ -109,7 +109,7 @@ EOF
 
 add_pi_user_to_groups() {
   onvm_chroot sh -l -ex - <<\EOF
-for GRP in adm dialout cdrom audio users sudo video games; do
+for GRP in adm dialout cdrom audio users sudo video games plugdev; do
   adduser pi $GRP
 done
 EOF
