@@ -48,7 +48,7 @@ locales	locales/locales_to_be_generated	multiselect	en_GB.UTF-8 UTF-8
 keyboard-configuration	keyboard-configuration/model	select	Generic 105-key (Intl) PC
 # Users allowed to start the X server:
 # Choices: Root Only, Console Users Only, Anybody
-x11-common	x11-common/xwrapper/allowed_users	select	Console Users Only
+x11-common	x11-common/xwrapper/allowed_users	select	Anybody
 # Compose key:
 # Choices: No compose key, Right Alt (AltGr), Right Control, Right Logo key, Menu key, Left Logo key, Caps Lock
 keyboard-configuration	keyboard-configuration/compose	select	No compose key
