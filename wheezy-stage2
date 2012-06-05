@@ -67,6 +67,18 @@ sed -i -e "s/^\(1:2345.*\)getty\(.*tty1\)$/\1getty --noclear\2/" /etc/inittab
 EOF
 }
 
+adjust_motd() {
+  onvm_chroot sh -l -e <<\EOF1
+cat <<EOF2 >> /etc/motd.tail
+NOTE: this image is built using Spindle, http://asbradbury.org/projects/spindle
+and is a WORK IN PROGRESS. As such, you should expect to need to update to a
+new release from raspberrypi.org in the near future. Thank you for your
+assistance in testing.
+
+EOF2
+EOF1
+}
+
 install_firmware() {
   onvm_chroot sh -l -e - <<EOF
 echo "deb http://asbradbury.org/tmp/raspi/tmp_repo wheezy main" > /etc/apt/sources.list.d/raspi.list
@@ -97,6 +109,7 @@ dotask configure_network_interfaces
 dotask configure_hostname
 dotask disable_eth_renaming
 dotask keep_boot_messages
+dotask adjust_motd
 dotask install_firmware
 dotask allow_starting_services
 dotask shutdown_qemu
