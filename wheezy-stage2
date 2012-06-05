@@ -111,6 +111,7 @@ dotask disable_eth_renaming
 dotask keep_boot_messages
 dotask adjust_motd
 dotask install_firmware
+dotask update_issue
 dotask allow_starting_services
 dotask shutdown_qemu
 #dotask download_and_extract_firmware_if_necessary

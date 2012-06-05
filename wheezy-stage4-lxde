@@ -80,6 +80,7 @@ dotask install_and_configure_lightdm
 dotask install_qt5
 dotask save_space_using_hardlink
 dotask allow_starting_services
+dotask update_issue
 dotask fingerprint_debian
 dotask shutdown_qemu
 dotask finish_image

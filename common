@@ -139,6 +139,18 @@ download_if_necessary() {
   [ -f $(basename "$1") ] || wget "$1"
 }
 
+get_git_hash() {
+  git log --pretty=format:'%h' -n 1
+}
+
+update_issue() {
+  GIT_HASH=$(get_git_hash) &&
+  CUR_DATE=$(date "+%Y-%m-%d")
+  onvm_chroot sh -l -e <<EOF
+printf "Raspberry Pi reference $CUR_DATE (from spindle $GIT_HASH, $CURIMG\n" > /etc/rpi-issue
+EOF
+}
+
 # Create a list of all installed packages, all manually installed packages and 
 # the debconf selections
 fingerprint_debian() {
