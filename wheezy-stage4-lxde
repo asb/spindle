@@ -30,6 +30,13 @@ apt-get install -y --allow-unauthenticated libwayland0 libwayland-dev
 EOF
 }
 
+install_omxplayer() {
+  onvm_chroot sh -l -e - <<\EOF
+apt-get update
+apt-get install -y --allow-unauthenticated omxplayer
+EOF
+}
+
 configure_lxde() {
   onvm_chroot sh -l -e <<EOF &&
 mkdir -p /opt/rpi_artwork
@@ -89,6 +96,7 @@ dotask mount_apt_cache
 dotask disable_starting_services
 dotask install_wayland
 dotask install_packages
+dotask install_omxplayer
 dotask configure_lxde
 dotask setup_automounting
 dotask install_and_configure_lightdm
