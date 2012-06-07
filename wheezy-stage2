@@ -61,9 +61,12 @@ EOF
 
 # Due to a change of behaviour in getty, we must pass --noclear to ensure our 
 # boot messages don't get cleared
-keep_boot_messages() {
+# Also, spawn a getty on the serial line
+configure_inittab() {
   onvm_chroot sh -l -e - <<\EOF
 sed -i -e "s/^\(1:2345.*\)getty\(.*tty1\)$/\1getty --noclear\2/" /etc/inittab
+printf "\n#Spawn a getty on Raspberry Pi serial line\n" >> /etc/inittab
+printf "T0:23:respawn:/sbin/getty -L ttyAMA0 115200 vt100\n" >> /etc/inittab
 EOF
 }
 
