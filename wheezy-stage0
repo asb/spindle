@@ -34,9 +34,12 @@ APT_CACHE_IMG=wheezy_apt_cache.qed
 mkdir -p $WORKDIR
 cd $WORKDIR
 [ -b "$NBD_DEV" ] || die "nbd device '%s' does not exist. Try sudo modprobe nbd max_part=16" "$NBD_DEV"
-if ! [ -f wheezy_apt_cache.qed ]; then
+# Delete apt cache if it was not successfully created
+[ -e "$APT_CACHE_IMG.wip" ] && rm "$APT_CACHE_IMG"
+if ! [ -f "$APT_CACHE_IMG" ]; then
   printf "No apt cache disk image exists. Making one.\n"
   dotask qemu-img create -f qed $APT_CACHE_IMG 4G
+  touch "$APT_CACHE_IMG.wip"
   sudo -v
   dotask attach_image_to_nbd $APT_CACHE_IMG $NBD_DEV
   dotask sudo mkfs.ext4 -O ^huge_file $NBD_DEV
@@ -46,6 +49,7 @@ if ! [ -f wheezy_apt_cache.qed ]; then
   sudo touch rootfs/archives/lock
   dotask sudo umount $NBD_DEV
   dotask detach_image_from_nbd $NBD_DEV
+  rm "$APT_CACHE_IMG.wip"
 fi
 dotask qemu-img create -f qed $CURIMG 1850M
 sudo -v
