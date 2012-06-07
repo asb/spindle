@@ -109,9 +109,16 @@ EOF
 
 add_pi_user_to_groups() {
   onvm_chroot sh -l -ex - <<\EOF
-for GRP in adm dialout cdrom audio users sudo video games plugdev; do
+groupadd -f input
+for GRP in adm dialout cdrom audio users sudo video games plugdev input; do
   adduser pi $GRP
 done
+EOF
+}
+
+make_udev_input_rule() {
+  onvm_chroot sh -l -e - <<EOF
+printf 'SUBSYSTEM=="input", GROUP="input", MODE="0660"\n' > /etc/udev/rules.d/99-input.rules
 EOF
 }
 
@@ -219,6 +226,7 @@ dotask set_debconf_selections
 dotask install_packages
 dotask configure_ifplugd
 dotask add_pi_user_to_groups
+dotask make_udev_input_rule
 #dotask add_opt_vc_lib_to_ld_so
 dotask setup_sudoers
 dotask setup_swap
