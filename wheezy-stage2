@@ -36,13 +36,15 @@ EOF
 }
 
 configure_network_interfaces() {
-  onvm_chroot sh -l -e - <<EOF1
+  onvm_chroot sh -l -e - <<\EOF1
 cat <<EOF2 > /etc/network/interfaces
 auto lo
 
 iface lo inet loopback
 iface eth0 inet dhcp
 EOF2
+# Default to a known-good nameserver (useful for mounting this image over NFS)
+printf "nameserver 8.8.8.8\n" > /etc/resolv.conf
 EOF1
 }
 
