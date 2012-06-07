@@ -28,6 +28,8 @@ console-setup	console-setup/codeset47	select	. Combined - Latin; Slavic Cyrillic
 # Time zone:
 # Choices: GMT, GMT+0, GMT+1, GMT+10, GMT+11, GMT+12, GMT+2, GMT+3, GMT+4, GMT+5, GMT+6, GMT+7, GMT+8, GMT+9, GMT-0, GMT-1, GMT-10, GMT-11, GMT-12, GMT-13, GMT-14, GMT-2, GMT-3, GMT-4, GMT-5, GMT-6, GMT-7, GMT-8, GMT-9, GMT0, Greenwich, UCT, UTC, Universal, Zulu
 tzdata	tzdata/Zones/Etc	select	UTC
+# for internal use
+console-setup   console-setup/store_defaults_in_debconf_db      boolean true
 # Font for the console:
 # Choices: Fixed, Terminus, TerminusBold, TerminusBoldVGA, VGA, Do not change the boot/kernel font
 console-setup	console-setup/fontface47	select	Do not change the boot/kernel font
@@ -97,7 +99,10 @@ apt-get update
 # install some utils
 apt-get install -y ssh locales less fbset sudo psmisc strace module-init-tools ifplugd
 apt-get install -y console-setup keyboard-configuration debconf-utils parted unzip
-apt-get install -y libudev-dev libicu-dev build-essential python bash-completion gdb
+apt-get install -y build-essential python bash-completion gdb pkg-config
+# For now, we can include the dev packages qt5 wants
+apt-get install -y --no-install-recommends libfontconfig1-dev libicu-dev libdbus-1-dev libfreetype6-dev \
+    libgstreamer-plugins-base0.10-dev libudev-dev
 apt-get install -y luajit lua5.1
 apt-get install -y hardlink ca-certificates curl
 apt-get install -y fake-hwclock ntp nfs-common
