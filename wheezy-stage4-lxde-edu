@@ -28,9 +28,9 @@ EOF
 setup_python_game_examples() {
   onvm_chroot sh -l -e <<\EOF
 cd /home/pi
-wget http://asbradbury.org/tmp/raspi/python_games.zip
-unzip python_games.zip
-rm python_games.zip
+wget http://asbradbury.org/tmp/raspi/python_games.tar.gz
+tar -xvf python_games.tar.gz
+rm python_games.tar.gz
 chown -R pi:pi python_games
 wget http://asbradbury.org/tmp/raspi/python_games
 mkdir -p Desktop
