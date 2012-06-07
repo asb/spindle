@@ -40,6 +40,15 @@ chown -R pi:pi Desktop
 EOF
 }
 
+# relies on the fact we made a Desktop directory in 
+# setup_python_game_examples
+setup_desktop_icons() {
+  onvm_chroot sh -l -e <<\EOF
+cd /usr/share/applications
+sudo -u pi cp -a scratch.desktop midori.desktop idle.desktop idle3.desktop /home/pi/Desktop
+EOF
+}
+
 cd $WORKDIR
 dotask branch_image ../$OUTDIR/stage4-lxde.qed $CURIMG
 dotask run_qemu $CURIMG
@@ -48,6 +57,7 @@ dotask mount_apt_cache
 dotask install_packages
 dotask install_scratch
 dotask setup_python_game_examples
+dotask setup_desktop_icons
 dotask save_space_using_hardlink
 dotask allow_starting_services
 dotask fingerprint_debian
