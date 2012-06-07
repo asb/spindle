@@ -50,6 +50,17 @@ sudo -u pi cp -a scratch.desktop midori.desktop idle.desktop idle3.desktop /home
 EOF
 }
 
+# There are 2 menu entries for both of idle3 and idle2. Fix this
+hide_redundant_idle_menu_intries() {
+  onvm_chroot sh -l -e <<\EOF
+mkdir -p /usr/local/share/applications
+for ENTRY in /usr/share/applications/idle-python*.desktop; do
+  cp -a $ENTRY /usr/local/share/applications
+  printf "NoDisplay=true\n" >> "/usr/local/share/applications/$(basename $ENTRY)"
+done
+EOF
+}
+
 cd $WORKDIR
 dotask branch_image ../$OUTDIR/stage4-lxde.qed $CURIMG
 dotask run_qemu $CURIMG
