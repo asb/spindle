@@ -113,7 +113,7 @@ dotask configure_sources_list
 dotask configure_network_interfaces
 dotask configure_hostname
 dotask disable_eth_renaming
-dotask keep_boot_messages
+dotask configure_inittab
 dotask adjust_motd
 dotask install_firmware
 dotask update_issue
