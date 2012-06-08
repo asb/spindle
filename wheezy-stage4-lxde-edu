@@ -51,7 +51,7 @@ EOF
 }
 
 # There are 2 menu entries for both of idle3 and idle2. Fix this
-hide_redundant_idle_menu_intries() {
+hide_redundant_idle_menu_entries() {
   onvm_chroot sh -l -e <<\EOF
 mkdir -p /usr/local/share/applications
 for ENTRY in /usr/share/applications/idle-python*.desktop; do
@@ -70,6 +70,7 @@ dotask install_packages
 dotask install_scratch
 dotask setup_python_game_examples
 dotask setup_desktop_icons
+dotask hide_redundant_idle_menu_entries
 dotask save_space_using_hardlink
 dotask allow_starting_services
 dotask fingerprint_debian
