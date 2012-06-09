@@ -185,7 +185,7 @@ EOF
 # We use a swap file rather than a swap partition for greater flexibility
 setup_swap() {
   onvm_chroot sh -l -e - <<EOF
-apt-get install dphys-swapfile
+apt-get -y --allow-unauthenticated install dphys-swapfile
 echo "CONF_SWAPSIZE=100" > /etc/dphys-swapfile
 EOF
 }
