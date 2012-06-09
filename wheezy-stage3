@@ -213,6 +213,17 @@ EOF2
 EOF1
 }
 
+tweak_inputrc() {
+  onvm_chroot sh -l -e - <<\EOF1
+cat <<\EOF2 >> /etc/inputrc
+
+# Make up and down arrows search history
+"\e[B": history-search-forward
+"\e[A": history-search-backward
+EOF2
+EOF1
+}
+
 # It's not to have the sbin dirs in $PATH as that gives us ifconfig
 fiddle_default_PATH() {
   # This sed match is clearly brittle and specific to the current debian 
@@ -259,6 +270,7 @@ dotask make_udev_input_rule
 dotask setup_sudoers
 dotask setup_swap
 dotask setup_console_setup
+dotask tweak_inputrc
 dotask fiddle_default_PATH
 dotask save_space_using_hardlink
 dotask add_qt5_apt_source
