@@ -190,6 +190,29 @@ echo "CONF_SWAPSIZE=100" > /etc/dphys-swapfile
 EOF
 }
 
+setup_console_setup() {
+  onvm_chroot sh -l -e - <<\EOF1
+cat <<\EOF2 > /etc/default/console-setup
+# CONFIGURATION FILE FOR SETUPCON
+
+# Consult the console-setup(5) manual page.
+
+ACTIVE_CONSOLES="/dev/tty[1-6]"
+
+CHARMAP="UTF-8"
+
+CODESET="guess"
+FONTFACE=""
+FONTSIZE=""
+
+VIDEOMODE=
+
+# The following is an example how to use a braille font
+# FONT='lat9w-08.psf.gz brl-8x8.psf'
+EOF2
+EOF1
+}
+
 # It's not to have the sbin dirs in $PATH as that gives us ifconfig
 fiddle_default_PATH() {
   # This sed match is clearly brittle and specific to the current debian 
@@ -235,6 +258,7 @@ dotask make_udev_input_rule
 #dotask add_opt_vc_lib_to_ld_so
 dotask setup_sudoers
 dotask setup_swap
+dotask setup_console_setup
 dotask fiddle_default_PATH
 dotask save_space_using_hardlink
 dotask add_qt5_apt_source
