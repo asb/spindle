@@ -23,6 +23,14 @@ apt-get install -y desktop-base lxpolkit
 EOF
 }
 
+# make gksu default to sudo mode
+configure_gksu() {
+  onvm_chroot sh -l -e - <<\EOF
+update-alternatives --set libgksu-gconf-defaults /usr/share/libgksu/debian/gconf-defaults.libgksu-sudo
+update-gconf-defaults
+EOF
+}
+
 install_wayland() {
   onvm_chroot sh -l -e - <<\EOF
 apt-get update
@@ -54,11 +62,7 @@ sed "$PCMANFMCFG" -i -e 's/^wallpaper_mode.*/wallpaper_mode=3/'
 sed "$PCMANFMCFG" -i -e 's/^desktop_bg.*/desktop_bg=#ffffff/'
 
 # while we're at it, let's not use xdg-su which Debian doesn't even provide
-sed "$PCMANFMCFG" -i -e 's/^su_cmd.*/su_cmd=gksudo %s/'
-
-# Don't show a menu entry for 'root terminal' as we don't have a root password
-mkdir -p /usr/local/share/applications
-sed /usr/share/applications/gksu.desktop -e "s/^Exec=gksu /Exec=gksudo /" > /usr/local/share/applications/gksu.desktop
+sed "$PCMANFMCFG" -i -e 's/^su_cmd.*/su_cmd=gksu %s/'
 EOF
 }
 
@@ -100,6 +104,7 @@ dotask mount_apt_cache
 dotask disable_starting_services
 dotask install_wayland
 dotask install_packages
+dotask configure_gksu
 dotask install_omxplayer
 dotask configure_lxde
 dotask setup_automounting
