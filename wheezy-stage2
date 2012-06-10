@@ -254,8 +254,13 @@ EOF
 
 # Relies on the fact my repo was already added in install_firmware
 install_raspi_config() {
-  onvm_chroot sh -l -e - <<EOF
+  onvm_chroot sh -l -e - <<\EOF
 apt-get install --allow-unauthenticated -y raspi-config
+# Automatically log in on tty1 until raspi-config configures it to do 
+# otherwise
+sed -i /etc/inittab -e "s|^\(1:2345.*getty.*tty1.*\)|\
+#\1 # RPICFG_TO_ENABLE\n1:2345:respawn:/bin/login -f root tty1 </dev/tty1 >/dev/tty1 2>\&1 # RPICFG_TO_DISABLE|"
+cp /usr/share/doc/raspi-config/sample_profile_d.sh /etc/profile.d/raspi-config.sh
 EOF
 }
 
