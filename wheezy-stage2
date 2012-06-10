@@ -75,6 +75,7 @@ EOF
 adjust_motd() {
   onvm_chroot sh -l -e <<\EOF1
 cat <<EOF2 >> /etc/motd.tail
+
 NOTE: this image is built using Spindle, http://asbradbury.org/projects/spindle
 and is a WORK IN PROGRESS. As such, you should expect to need to update to a
 new release from raspberrypi.org in the near future. Thank you for your
