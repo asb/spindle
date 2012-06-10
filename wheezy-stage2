@@ -252,6 +252,13 @@ EOF1
 EOF
 }
 
+# Relies on the fact my repo was already added in install_firmware
+install_raspi_config() {
+  onvm_chroot sh -l -e - <<EOF
+apt-get install --allow-unauthenticated -y raspi-config
+EOF
+}
+
 # Deprecated in favour of using the Debian packaging
 download_and_extract_firmware_if_necessary() {
   if ! [ -d firmware ]; then
@@ -274,6 +281,7 @@ dotask disable_eth_renaming
 dotask configure_inittab
 dotask adjust_motd
 dotask install_firmware
+dotask install_raspi_config
 dotask update_issue
 dotask allow_starting_services
 dotask shutdown_qemu
