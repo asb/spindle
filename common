@@ -100,7 +100,7 @@ export_image_for_release() {
   # Change mirror in sources.list to our preferred one. This will go horribly 
   # wrong if there is more than one entry in sources.list
   ssh_in_to_qemu sh -ex <<EOF
-sed -i /mnt/etc/apt/sources.list -e "s|^deb [^ ]*|deb http://ftp.uk.debian.org/debian|"
+sed -i /mnt/etc/apt/sources.list -e "s|^deb [^ ]*|deb http://http.debian.net/debian|"
 EOF
   shutdown_qemu
   attach_image_to_nbd temp.qed /dev/nbd0
