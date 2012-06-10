@@ -262,7 +262,6 @@ apt-get install --allow-unauthenticated -y raspi-config
 # otherwise
 sed -i /etc/inittab -e "s|^\(1:2345.*getty.*tty1.*\)|\
 #\1 # RPICFG_TO_ENABLE\n1:2345:respawn:/bin/login -f root tty1 </dev/tty1 >/dev/tty1 2>\&1 # RPICFG_TO_DISABLE|"
-cp /usr/share/doc/raspi-config/sample_profile_d.sh /etc/profile.d/raspi-config.sh
 EOF
 }
 
