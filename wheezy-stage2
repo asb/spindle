@@ -194,6 +194,8 @@ and is a WORK IN PROGRESS. As such, you should expect to need to update to a
 new release from raspberrypi.org in the near future. Thank you for your
 assistance in testing.
 
+Type 'startx' to launch a graphical session
+
 EOF2
 EOF1
 }
