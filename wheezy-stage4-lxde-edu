@@ -46,7 +46,7 @@ EOF
 setup_desktop_icons() {
   onvm_chroot sh -l -e <<\EOF
 cd /usr/share/applications
-sudo -u pi cp -a scratch.desktop midori.desktop idle.desktop idle3.desktop /home/pi/Desktop
+sudo -u pi cp -a scratch.desktop midori.desktop idle.desktop idle3.desktop lxterminal.desktop /home/pi/Desktop
 EOF
 }
 
