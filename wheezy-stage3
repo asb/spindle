@@ -222,13 +222,14 @@ EOF2
 EOF1
 }
 
+# Spread the word about my favourite inputrc tweak
 tweak_inputrc() {
   onvm_chroot sh -l -e - <<\EOF1
 cat <<\EOF2 >> /etc/inputrc
 
-# Make up and down arrows search history
-"\e[B": history-search-forward
-"\e[A": history-search-backward
+# mappings for up and down arrows search history
+# "\e[B": history-search-forward
+# "\e[A": history-search-backward
 EOF2
 EOF1
 }
