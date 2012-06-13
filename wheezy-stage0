@@ -12,10 +12,10 @@ CURIMG=stage0.qed
 create_partition_table() {
   # TODO: partition sizes shouldn't be hard-coded
   sudo parted $1 <<EOF
-  unit mb
+  unit b
   mklabel msdos
-  mkpart primary fat32 0 60
-  mkpart primary ext4 60 1850
+  mkpart primary fat32 $(expr 4 \* 1024 \* 1024) $(expr 60 \* 1024 \* 1024 - 1)
+  mkpart primary ext4 $(expr 60 \* 1024 \* 1024) $(expr 1850 \* 1024 \* 1024 - 1)
   print
   quit
 EOF
