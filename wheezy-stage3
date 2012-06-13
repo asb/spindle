@@ -238,8 +238,11 @@ fiddle_default_PATH() {
   # This sed match is clearly brittle and specific to the current debian 
   # /etc/profile
   onvm_chroot sh -l -ex - <<EOF
-  sed /etc/profile -i -e \
+sed /etc/profile -i -e \
   's|PATH="/usr/.*games.*$|PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"|'
+# need to fix ENV_PATH in /etc/login.defs
+sed /etc/login.defs -e "s|^ENV_PATH.*|ENV_PATH        PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games|"
+
 EOF
 }
 
