@@ -138,9 +138,9 @@ EOF
 }
 
 remove_ssh_host_keys() {
-  ssh_in_to_qemu sh -ex - <<\EOF
-rm -f /mnt/etc/ssh/ssh_host_*_key*
-cat <<\RCL | tee /mnt/etc/rc.local
+  onvm_chroot sh -l -ex - <<\EOF
+rm -f /etc/ssh/ssh_host_*_key*
+cat <<\RCL | tee /etc/rc.local
 #!/bin/sh -e
 #
 # rc.local
@@ -154,11 +154,6 @@ cat <<\RCL | tee /mnt/etc/rc.local
 #
 # By default this script does nothing.
 
-# re-generate the ssh host keys if necessary
-if [ ! -e /etc/ssh/ssh_host_rsa_key ]; then
-  dpkg-reconfigure openssh-server
-fi
-
 # Print the IP address
 _IP=$(hostname -I) || true
 if [ "$_IP" ]; then
@@ -167,6 +162,39 @@ fi
 
 exit 0
 RCL
+update-rc.d ssh disable # to be re-enabled at first boot when we regenerate ssh host keys
+cat <<\EOF1 > /etc/init.d/regenerate_ssh_host_keys
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          regenerate_ssh_host_keys
+# Required-Start:
+# Required-Stop:
+# Default-Start: 2 3 4 5 S
+# Default-Stop:
+# Short-Description: Regenerate ssh host keys
+# Description:
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+set -e
+
+case "$1" in
+  start)
+    log_daemon_msg "Regenerating ssh host keys (in background)"
+    nohup sh -c "dpkg-reconfigure openssh-server && update-rc.d ssh enable \
+      && rm /etc/init.d/regenerate_ssh_host_keys && \
+      update-rc.d regenerate_ssh_host_keys remove" > /var/log/regen_ssh_keys.log &
+    log_end_msg $?
+    ;;
+  *)
+    echo "Usage: $0 start" >&2
+    exit 3
+    ;;
+esac
+EOF1
+chmod +x /etc/init.d/regenerate_ssh_host_keys
+update-rc.d regenerate_ssh_host_keys defaults
 EOF
 }
 
