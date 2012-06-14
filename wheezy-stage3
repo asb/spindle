@@ -243,7 +243,7 @@ fiddle_default_PATH() {
 sed /etc/profile -i -e \
   's|PATH="/usr/.*games.*$|PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"|'
 # need to fix ENV_PATH in /etc/login.defs
-sed /etc/login.defs -e "s|^ENV_PATH.*|ENV_PATH        PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games|"
+sed -i /etc/login.defs -e "s|^ENV_PATH.*|ENV_PATH        PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games|"
 EOF
 }
 
