@@ -35,9 +35,9 @@ onvm_chroot() {
 }
 
 shutdown_qemu() {
-  echo "sync" > fifo.in
-  echo "umount /mnt" > fifo.in
+  ssh_in_to_qemu "sync && umount -a" || true
   echo "exit" > fifo.in
+  sleep 5
   if [ -e qemu.pid ]; then
     QEMU_PID=$(cat qemu.pid)
     while [ -n "$QEMU_PID" ]; do 
