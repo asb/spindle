@@ -27,3 +27,5 @@ invocation of sshd
 * Verify after installing gparted it can be launched from the graphical menu 
 and that in pcmanfm 'open folder as root' works (checks PolicyKit 
 configuration).
+* Run fsck on the root partition to ensure the image generation process 
+produced a clean filesystem
