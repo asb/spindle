@@ -106,6 +106,7 @@ apt-get install -y --no-install-recommends libfontconfig1-dev libicu-dev libdbus
 apt-get install -y luajit lua5.1
 apt-get install -y hardlink ca-certificates curl
 apt-get install -y fake-hwclock ntp nfs-common
+apt-get install -y --no-install-recommends cifs-utils
 apt-get install -y --allow-unauthenticated libraspberrypi-dev libraspberrypi-doc
 /etc/init.d/fake-hwclock stop # save current time
 update-rc.d hwclock.sh disable
