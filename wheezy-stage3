@@ -97,7 +97,7 @@ install_packages() {
   ssh_in_to_qemu chroot /mnt sh -l -ex - <<EOF
 apt-get update
 # install some utils
-apt-get install -y ssh locales less fbset sudo psmisc strace module-init-tools ifplugd
+apt-get install -y ssh locales less fbset sudo psmisc strace module-init-tools ifplugd ed
 apt-get install -y console-setup keyboard-configuration debconf-utils parted unzip
 apt-get install -y build-essential python bash-completion gdb pkg-config
 # For now, we can include the dev packages qt5 wants
