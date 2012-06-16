@@ -16,7 +16,7 @@ install_packages() {
 apt-get update
 apt-get install -y python idle python-pygame python-tk
 apt-get install -y python3 idle3 python3-tk
-apt-get install -y debian-reference-en
+apt-get install -y debian-reference-en dillo
 EOF
 }
 
@@ -49,6 +49,7 @@ setup_desktop_icons() {
 cd /usr/share/applications
 sudo -u pi cp -a scratch.desktop midori.desktop idle.desktop idle3.desktop \
   lxterminal.desktop debian-reference-common.desktop /home/pi/Desktop
+sed -i debian-reference-common.desktop -e "s/^Exec=.*/Exec=env BROWSER=dillo debian-reference/"
 EOF
 }
 
