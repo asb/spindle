@@ -118,7 +118,7 @@ EOF
 
 cache_keymap() {
   onvm_chroot sh -l -e - <<\EOF
-/etc/init.d/console-setup start
+setupcon --force --save-only -v
 EOF
 }
 
