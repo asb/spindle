@@ -55,7 +55,7 @@ dotask qemu-img create -f qed $CURIMG 1850M
 sudo -v
 dotask attach_image_to_nbd $CURIMG $NBD_DEV
 dotask create_partition_table $NBD_DEV
-dotask sudo mkdosfs -S 512 -s 64 -v $BOOT_DEV
+dotask sudo mkdosfs -S 512 -s 16 -v $BOOT_DEV
 dotask sudo mkfs.ext4 -O ^huge_file $ROOT_DEV
 mkdir -p boot
 dotask sudo mount $BOOT_DEV boot
