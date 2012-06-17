@@ -144,7 +144,7 @@ EOF1
 
 configure_sources_list() {
   onvm_chroot sh -l -e - <<EOF
-  printf "deb $DEB_MIRROR wheezy main non-free\n" > /etc/apt/sources.list
+  printf "deb $DEB_MIRROR wheezy main contrib non-free\n" > /etc/apt/sources.list
 EOF
 }
 
