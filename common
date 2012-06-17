@@ -99,14 +99,20 @@ export_image_for_release() {
   run_qemu temp.qed
   # Change mirror in sources.list to our preferred one. This will go horribly 
   # wrong if there is more than one entry in sources.list
-  ssh_in_to_qemu sh -l -ex <<EOF
-sed -i /mnt/etc/apt/sources.list -e "s|^deb [^ ]*|deb http://http.debian.net/debian|"
-cp /mnt/usr/share/doc/raspi-config/sample_profile_d.sh /mnt/etc/profile.d/raspi-config.sh
+  onvm_chroot sh -l -ex <<EOF
+sed -i /etc/apt/sources.list -e "s|^deb [^ ]*|deb http://http.debian.net/debian|"
+cp /usr/share/doc/raspi-config/sample_profile_d.sh /etc/profile.d/raspi-config.sh
 apt-get update
 EOF
   shutdown_qemu
   attach_image_to_nbd temp.qed /dev/nbd0
   sudo zerofree -v /dev/nbd0p2
+  mkdir -p rootfs boot
+  sudo mount $BOOT_DEV boot
+  sudo mount $ROOT_DEV rootfs
+  sudo cp rootfs/etc/rpi-issue boot/issue.txt
+  sudo umount $BOOT_DEV
+  sudo umount $ROOT_DEV
   detach_image_from_nbd /dev/nbd0
   convert_image temp.qed ../$2
 }
