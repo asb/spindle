@@ -17,12 +17,9 @@ apt-get update
 apt-get install -y python idle python-pygame python-tk
 apt-get install -y python3 idle3 python3-tk
 apt-get install -y debian-reference-en dillo
-EOF
-}
-
-install_scratch() {
-  onvm_chroot sh -l -e <<\EOF
 apt-get install -y scratch
+# Requested for raspberry filling
+apt-get install -y python3-numpy
 EOF
 }
 
@@ -87,7 +84,6 @@ dotask run_qemu $CURIMG
 dotask disable_starting_services
 dotask mount_apt_cache
 dotask install_packages
-dotask install_scratch
 dotask setup_python_game_examples
 dotask setup_desktop_icons
 dotask hide_redundant_idle_menu_entries
