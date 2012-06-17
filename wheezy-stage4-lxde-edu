@@ -42,7 +42,7 @@ rm python_games.tar.gz
 chown -R pi:pi python_games
 mkdir -p Desktop
 cd Desktop
-echo <<EOF1 > python-games.desktop
+echo <<\EOF1 > python-games.desktop
 [Desktop Entry]
 Name=Python Games
 Comment=From http://inventwithpython.com/pygame/
@@ -65,6 +65,7 @@ setup_desktop_icons() {
 cd /usr/share/applications
 sudo -u pi cp -a scratch.desktop midori.desktop idle.desktop idle3.desktop \
   lxterminal.desktop debian-reference-common.desktop /home/pi/Desktop
+cd /home/pi/Desktop
 sed -i debian-reference-common.desktop -e "s/^Exec=.*/Exec=env BROWSER=dillo debian-reference/"
 EOF
 }
