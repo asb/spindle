@@ -35,13 +35,24 @@ cd python_games
 wget http://asbradbury.org/tmp/raspi/fix_wormy.patch
 patch -p1 < fix_wormy.patch
 rm fix_wormy.patch
+wget http://asbradbury.org/tmp/raspi/python_games -O launcher.sh
+chmod +x launcher.sh
 cd ..
 rm python_games.tar.gz
 chown -R pi:pi python_games
 mkdir -p Desktop
 cd Desktop
-wget http://asbradbury.org/tmp/raspi/python_games
-chmod +x python_games
+echo <<EOF1 > python-games.desktop
+[Desktop Entry]
+Name=Python Games
+Comment=From http://inventwithpython.com/pygame/
+Exec=/home/pi/python_games/launcher.sh
+Icon=/usr/share/pixmaps/python.xpm
+Terminal=false
+Type=Application
+Categories=Application;Games;
+StartupNotify=true
+EOF1
 cd ..
 chown -R pi:pi Desktop
 EOF
