@@ -203,9 +203,41 @@ EOF1
 
 install_firmware() {
   onvm_chroot sh -l -e - <<EOF
-echo "deb http://asbradbury.org/tmp/raspi/tmp_repo wheezy main" > /etc/apt/sources.list.d/raspi.list
+echo "deb http://asbradbury.org/tmp/raspi/secure_repo wheezy main" > /etc/apt/sources.list.d/raspi.list
+apt-key add - <<EOF1
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+mQENBE/d7o8BCACrwqQacGJfn3tnMzGui6mv2lLxYbsOuy/+U4rqMmGEuo3h9m92
+30E2EtypsoWczkBretzLUCFv+VUOxaA6sV9+puTqYGhhQZFuKUWcG7orf7QbZRuu
+TxsEUepW5lg7MExmAu1JJzqM0kMQX8fVyWVDkjchZ/is4q3BPOUCJbUJOsE+kK/6
+8kW6nWdhwSAjfDh06bA5wvoXNjYoDdnSZyVdcYCPEJXEg5jfF/+nmiFKMZBraHwn
+eQsepr7rBXxNcEvDlSOPal11fg90KXpy7Umre1UcAZYJdQeWcHu7X5uoJx/MG5J8
+ic6CwYmDaShIFa92f8qmFcna05+lppk76fsnABEBAAG0IFJhc3BiZXJyeSBQaSBB
+cmNoaXZlIFNpZ25pbmcgS2V5iQE4BBMBAgAiBQJP3e6PAhsDBgsJCAcDAgYVCAIJ
+CgsEFgIDAQIeAQIXgAAKCRCCsSmSf6MwPk6vB/9pePB3IukU9WC9Bammh3mpQTvL
+OifbkzHkmAYxzjfK6D2I8pT0xMxy949+ThzJ7uL60p6T/32ED9DR3LHIMXZvKtuc
+mQnSiNDX03E2p7lIP/htoxW2hDP2n8cdlNdt0M9IjaWBppsbO7IrDppG2B1aRLni
+uD7v8bHRL2mKTtIDLX42Enl8aLAkJYgNWpZyPkDyOqamjijarIWjGEPCkaURF7g4
+d44HvYhpbLMOrz1m6N5Bzoa5+nq3lmifeiWKxioFXU+Hy5bhtAM6ljVb59hbD2ra
+X4+3LXC9oox2flmQnyqwoyfZqVgSQa0B41qEQo8t1bz6Q1Ti7fbMLThmbRHiuQEN
+BE/d7o8BCADNlVtBZU63fm79SjHh5AEKFs0C3kwa0mOhp9oas/haDggmhiXdzeD3
+49JWz9ZTx+vlTq0s+I+nIR1a+q+GL+hxYt4HhxoA6vlDMegVfvZKzqTX9Nr2VqQa
+S4Kz3W5ULv81tw3WowK6i0L7pqDmvDqgm73mMbbxfHD0SyTt8+fk7qX6Ag2pZ4a9
+ZdJGxvASkh0McGpbYJhk1WYD+eh4fqH3IaeJi6xtNoRdc5YXuzILnp+KaJyPE5CR
+qUY5JibOD3qR7zDjP0ueP93jLqmoKltCdN5+yYEExtSwz5lXniiYOJp8LWFCgv5h
+m8aYXkcJS1xVV9Ltno23YvX5edw9QY4hABEBAAGJAR8EGAECAAkFAk/d7o8CGwwA
+CgkQgrEpkn+jMD5Figf/dIC1qtDMTbu5IsI5uZPX63xydaExQNYf98cq5H2fWF6O
+yVR7ERzA2w33hI0yZQrqO6pU9SRnHRxCFvGv6y+mXXXMRcmjZG7GiD6tQWeN/3wb
+EbAn5cg6CJ/Lk/BI4iRRfBX07LbYULCohlGkwBOkRo10T+Ld4vCCnBftCh5x2OtZ
+TOWRULxP36y2PLGVNF+q9pho98qx+RIxvpofQM/842ZycjPJvzgVQsW4LT91KYAE
+4TVf6JjwUM6HZDoiNcX6d7zOhNfQihXTsniZZ6rky287htsWVDNkqOi5T3oTxWUo
+m++/7s3K3L0zWopdhMVcgg6Nt9gcjzqN1c0gy55L/g==
+=mNSj
+-----END PGP PUBLIC KEY BLOCK-----
+EOF1
 apt-get update
-apt-get install --allow-unauthenticated -y libraspberrypi-bin libraspberrypi0 raspberrypi-bootloader
+apt-get install -y libraspberrypi-bin libraspberrypi0 raspberrypi-bootloader
 cp -a /boot/arm192_start.elf /boot/start.elf # default to 129mb memory split
 echo "dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 \
 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait" > /boot/cmdline.txt
@@ -258,7 +290,7 @@ EOF
 # Relies on the fact my repo was already added in install_firmware
 install_raspi_config() {
   onvm_chroot sh -l -e - <<\EOF
-apt-get install --allow-unauthenticated -y raspi-config
+apt-get install -y raspi-config
 # Automatically log in on tty1 until raspi-config configures it to do 
 # otherwise
 sed -i /etc/inittab -e "s|^\(1:2345.*getty.*tty1.*\)|\

@@ -15,7 +15,7 @@ install_packages() {
 apt-get update
 apt-get install --no-install-recommends -y xserver-xorg-video-fbdev
 apt-get install --no-install-recommends -y xserver-xorg xinit
-apt-get install --no-install-recommends -y --allow-unauthenticated midori
+apt-get install --no-install-recommends -y midori
 apt-get install --no-install-recommends -y lxde lxtask menu-xdg gksu
 apt-get install -y mupdf gtk2-engines alsa-utils
 apt-get install -y --no-install-recommends netsurf-gtk zenity lxmusic xdg-utils
@@ -34,14 +34,14 @@ EOF
 install_wayland() {
   onvm_chroot sh -l -e - <<\EOF
 apt-get update
-apt-get install -y --allow-unauthenticated libwayland0 libwayland-dev
+apt-get install -y libwayland0 libwayland-dev
 EOF
 }
 
 install_omxplayer() {
   onvm_chroot sh -l -e - <<\EOF
 apt-get update
-apt-get install -y --allow-unauthenticated omxplayer
+apt-get install -y omxplayer
 EOF
 }
 

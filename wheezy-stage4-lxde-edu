@@ -22,7 +22,7 @@ EOF
 
 install_scratch() {
   onvm_chroot sh -l -e <<\EOF
-apt-get install -y --allow-unauthenticated scratch
+apt-get install -y scratch
 EOF
 }
 

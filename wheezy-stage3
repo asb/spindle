@@ -107,7 +107,7 @@ apt-get install -y luajit lua5.1
 apt-get install -y hardlink ca-certificates curl
 apt-get install -y fake-hwclock ntp nfs-common usbutils
 apt-get install -y --no-install-recommends cifs-utils
-apt-get install -y --allow-unauthenticated libraspberrypi-dev libraspberrypi-doc
+apt-get install -y libraspberrypi-dev libraspberrypi-doc
 /etc/init.d/fake-hwclock stop # save current time
 update-rc.d hwclock.sh disable
 # Don't need to start these by default, wastes boot time
@@ -225,7 +225,7 @@ EOF
 # We use a swap file rather than a swap partition for greater flexibility
 setup_swap() {
   onvm_chroot sh -l -e - <<EOF
-apt-get -y --allow-unauthenticated install dphys-swapfile
+apt-get -y install dphys-swapfile
 echo "CONF_SWAPSIZE=100" > /etc/dphys-swapfile
 EOF
 }
