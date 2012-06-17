@@ -31,6 +31,11 @@ setup_python_game_examples() {
 cd /home/pi
 wget http://asbradbury.org/tmp/raspi/python_games.tar.gz
 tar -xvf python_games.tar.gz
+cd python_games
+wget http://asbradbury.org/tmp/raspi/fix_wormy.patch
+patch -p1 < fix_wormy.patch
+rm fix_wormy.patch
+cd ..
 rm python_games.tar.gz
 chown -R pi:pi python_games
 mkdir -p Desktop
