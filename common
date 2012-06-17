@@ -156,7 +156,7 @@ update_issue() {
   GIT_HASH=$(get_git_hash) &&
   CUR_DATE=$(date "+%Y-%m-%d")
   onvm_chroot sh -l -e <<EOF
-printf "Raspberry Pi reference $CUR_DATE (from spindle $GIT_HASH, $CURIMG)\n" > /etc/rpi-issue
+printf "Raspberry Pi reference $CUR_DATE (from spindle, http://asbradbury.org/projects/spindle/, $GIT_HASH, $CURIMG)\n" > /etc/rpi-issue
 EOF
 }
 
