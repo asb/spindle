@@ -119,6 +119,7 @@ EOF
 cache_keymap() {
   onvm_chroot sh -l -e - <<\EOF
 setupcon --force --save-only -v
+/etc/init.d/fake-hwclock stop # save current time
 EOF
 }
 
