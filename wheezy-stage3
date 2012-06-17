@@ -186,7 +186,7 @@ case "$1" in
     nohup sh -c "dpkg-reconfigure openssh-server && update-rc.d ssh enable && \
       rm /etc/init.d/regenerate_ssh_host_keys && \
       update-rc.d regenerate_ssh_host_keys remove && \
-      printf '\nfinished\n'" > /var/log/regen_ssh_keys.log 2>&1 &
+      printf '\nfinished\n' && invoke-rc.d ssh start" > /var/log/regen_ssh_keys.log 2>&1 &
     log_end_msg $?
     ;;
   *)
