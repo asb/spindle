@@ -54,6 +54,10 @@ EOF
 # first change theme to mist (seems to render noticably faster)
 sed /etc/xdg/lxsession/LXDE/desktop.conf -i -e "s|sNet/ThemeName.*|sNet/ThemeName=Mist|"
 
+# configure openbox so it doesn't ask apps to redraw while resizing
+sed /etc/xdg/openbox/LXDE/rc.xml -i -e \
+  "s|<drawContents>yes</drawContents>|<drawContents>no</drawContents>|"
+
 # change background
 update-alternatives --install /usr/share/images/desktop-base/desktop-background \
   desktop-background /opt/rpi_artwork/Raspberry_Pi_Logo.png 65
