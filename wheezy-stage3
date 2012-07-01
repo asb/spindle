@@ -309,7 +309,6 @@ dotask mount_apt_cache
 dotask disable_starting_services
 dotask set_debconf_selections
 dotask install_packages
-dotask cache_keymap
 dotask configure_ifplugd
 dotask add_pi_user_to_groups
 dotask make_udev_input_rule
@@ -317,6 +316,7 @@ dotask make_udev_input_rule
 dotask setup_sudoers
 dotask setup_swap
 dotask setup_console_setup
+dotask cache_keymap
 dotask tweak_inputrc
 dotask fiddle_default_PATH
 dotask save_space_using_hardlink
