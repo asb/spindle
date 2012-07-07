@@ -94,7 +94,7 @@ EOF
 
 install_packages() {
   # we may want to break out DEBIAN_FRONTEND=noninteractive
-  ssh_in_to_qemu chroot /mnt sh -l -ex - <<EOF
+  ssh_in_to_qemu chroot /mnt sh -l -ex - <<\EOF
 apt-get update
 # install some utils
 apt-get install -y ssh locales less fbset sudo psmisc strace module-init-tools ifplugd ed
@@ -102,8 +102,9 @@ apt-get install -y console-setup keyboard-configuration debconf-utils parted unz
 apt-get install -y build-essential python bash-completion gdb pkg-config
 # For now, we can include the dev packages qt5 wants
 apt-get install -y --no-install-recommends libfontconfig1-dev libicu-dev libdbus-1-dev libfreetype6-dev \
-    libgstreamer-plugins-base0.10-dev libudev-dev
-apt-get install -y luajit lua5.1
+    libgstreamer-plugins-base0.10-dev libudev-dev libxslt1-dev libsqlite3-dev libssl-dev
+apt-get install -y lua5.1
+[ ! grep armhf /etc/rpi-issue ] && apt-get install -y luajit
 apt-get install -y hardlink ca-certificates curl
 apt-get install -y fake-hwclock ntp nfs-common usbutils
 apt-get install -y --no-install-recommends cifs-utils
@@ -320,7 +321,7 @@ dotask cache_keymap
 dotask tweak_inputrc
 dotask fiddle_default_PATH
 dotask save_space_using_hardlink
-dotask add_qt5_apt_source
+[ -z "$RASPBIAN" ] && dotask add_qt5_apt_source
 dotask adjust_sysctl
 dotask allow_starting_services
 dotask remove_ssh_host_keys

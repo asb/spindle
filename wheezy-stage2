@@ -198,7 +198,8 @@ EOF1
 
 install_firmware() {
   onvm_chroot sh -l -e - <<EOF
-echo "deb http://archive.raspberrypi.org/debian/ wheezy main" > /etc/apt/sources.list.d/raspi.list
+echo "deb http://asbradbury.org/tmp/raspi/staging_repo/ wheezy main" > /etc/apt/sources.list.d/raspi.list
+#echo "deb http://archive.raspberrypi.org/debian/ wheezy main" > /etc/apt/sources.list.d/raspi.list
 apt-key add - <<EOF1
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1.4.12 (GNU/Linux)

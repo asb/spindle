@@ -25,7 +25,8 @@ do_debootstrap() {
   # Need bzip2 for http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=657560
   sudo debootstrap --components=main,contrib,non-free \
   --verbose \
-  --foreign --arch armel --include=bzip2 \
+  --foreign --arch $TGT_ARCH --include=bzip2 \
+  --no-check-gpg \
   $1 $2 $DEB_MIRROR
 }
 

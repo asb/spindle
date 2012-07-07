@@ -60,7 +60,7 @@ sed /etc/xdg/openbox/LXDE/rc.xml -i -e \
 
 # change background
 update-alternatives --install /usr/share/images/desktop-base/desktop-background \
-  desktop-background /opt/rpi_artwork/Raspberry_Pi_Logo.png 65
+  desktop-background /opt/rpi_artwork/Raspberry_Pi_Logo.png 100
 PCMANFMCFG=/etc/xdg/pcmanfm/LXDE/pcmanfm.conf
 sed "$PCMANFMCFG" -i -e 's/^wallpaper_mode.*/wallpaper_mode=3/'
 sed "$PCMANFMCFG" -i -e 's/^desktop_bg.*/desktop_bg=#ffffff/'
@@ -106,14 +106,14 @@ dotask branch_image ../$OUTDIR/stage3.qed $CURIMG
 dotask run_qemu $CURIMG
 dotask mount_apt_cache
 dotask disable_starting_services
-dotask install_wayland
+[ -z "$RASPBIAN" ] && dotask install_wayland
 dotask install_packages
 dotask configure_gksu
-dotask install_omxplayer
+[ -z "$RASPBIAN" ] && dotask install_omxplayer
 dotask configure_lxde
 dotask setup_automounting
 dotask install_and_configure_lightdm
-dotask install_qt5
+[ -z "$RASPBIAN" ] && dotask install_qt5
 dotask save_space_using_hardlink
 dotask allow_starting_services
 dotask update_issue
