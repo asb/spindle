@@ -220,9 +220,10 @@ EOF
 
 setup_sudoers() {
   onvm_chroot sh -l -ex - <<EOF
-  chmod +w /etc/sudoers
-  echo "pi ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-  chmod -w /etc/sudoers
+chmod +w /etc/sudoers
+echo "pi ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+chmod -w /etc/sudoers
+passwd -d root # don't need root password any more
 EOF
 }
 
