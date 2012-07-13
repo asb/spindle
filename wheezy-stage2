@@ -198,8 +198,8 @@ EOF1
 
 install_firmware() {
   onvm_chroot sh -l -e - <<EOF
-echo "deb http://asbradbury.org/tmp/raspi/staging_repo/ wheezy main" > /etc/apt/sources.list.d/raspi.list
-#echo "deb http://archive.raspberrypi.org/debian/ wheezy main" > /etc/apt/sources.list.d/raspi.list
+#echo "deb http://asbradbury.org/tmp/raspi/staging_repo/ wheezy main" > /etc/apt/sources.list.d/raspi.list
+echo "deb http://archive.raspberrypi.org/debian/ wheezy main" > /etc/apt/sources.list.d/raspi.list
 apt-key add - <<EOF1
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1.4.12 (GNU/Linux)
@@ -280,6 +280,12 @@ cat <<EOF1 > /boot/config.txt
 
 # for more options see http://elinux.org/RPi_config.txt
 EOF1
+cat <<EOF2 > /etc/modprobe.d/raspi-blacklist.conf
+# blacklist spi and i2c by default (many users don't need them)
+
+blacklist spi-bcm2708
+blacklist i2c-bcm2708
+EOF2
 EOF
 }
 
