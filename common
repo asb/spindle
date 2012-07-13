@@ -100,7 +100,7 @@ export_image_for_release() {
   # Change mirror in sources.list to our preferred one. This will go horribly 
   # wrong if there is more than one entry in sources.list
   onvm_chroot sh -l -ex <<\EOF
-if [ grep armhf /etc/rpi-issue ]; then
+if grep armhf /etc/rpi-issue; then
   sed -i /etc/apt/sources.list -e "s|^deb [^ ]*|deb http://mirrordirector.raspbian.org/raspbian/|"
 else
   sed -i /etc/apt/sources.list -e "s|^deb [^ ]*|deb http://http.debian.net/debian|"
