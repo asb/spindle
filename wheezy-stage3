@@ -11,6 +11,18 @@ CURIMG=stage3.qed
 
 . ./common
 
+configure_apt() {
+  onvm_chroot sh -l -ex - <<\EOF
+cat <<\EOF1 > /etc/apt/apt.conf.d/50raspi
+# never use pdiffs. Current implementation is very slow on low-powered devices
+Acquire::PDiffs "0";
+
+# download up to 5 pdiffs:
+#Acquire::PDiffs::FileLimit "5";
+EOF1
+EOF
+}
+
 set_debconf_selections() {
   ssh_in_to_qemu chroot /mnt sh -l -ex - <<EOF
 debconf-set-selections <<SELEOF
@@ -309,6 +321,7 @@ dotask branch_image ../$OUTDIR/stage2.qed $CURIMG
 dotask run_qemu $CURIMG
 dotask mount_apt_cache
 dotask disable_starting_services
+dotask configure_apt
 dotask set_debconf_selections
 dotask install_packages
 dotask configure_ifplugd
