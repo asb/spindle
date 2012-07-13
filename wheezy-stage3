@@ -304,6 +304,12 @@ apt-get update
 EOF
 }
 
+install_memcpy_replacement() {
+  onvm_chroot sh -l -e <<\EOF
+apt-get install -y raspi-copies-and-fills
+EOF
+}
+
 adjust_sysctl() {
   onvm_chroot sh -l -e <<\EOF
   printf "\n# rpi tweaks\nvm.swappiness=1\n" >> /etc/sysctl.conf
@@ -337,6 +343,7 @@ dotask setup_console_setup
 dotask cache_keymap
 dotask tweak_inputrc
 dotask fiddle_default_PATH
+[ -n "$RASPBIAN" ] && dotask install_memcpy_replacement
 dotask save_space_using_hardlink
 [ -z "$RASPBIAN" ] && dotask add_qt5_apt_source
 dotask adjust_sysctl
