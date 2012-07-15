@@ -109,7 +109,7 @@ dotask disable_starting_services
 [ -z "$RASPBIAN" ] && dotask install_wayland
 dotask install_packages
 dotask configure_gksu
-[ -z "$RASPBIAN" ] && dotask install_omxplayer
+dotask install_omxplayer
 dotask configure_lxde
 dotask setup_automounting
 dotask install_and_configure_lightdm
