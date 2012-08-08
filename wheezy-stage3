@@ -345,7 +345,7 @@ dotask tweak_inputrc
 dotask fiddle_default_PATH
 [ -n "$RASPBIAN" ] && dotask install_memcpy_replacement
 dotask save_space_using_hardlink
-[ -z "$RASPBIAN" ] && dotask add_qt5_apt_source
+#[ -z "$RASPBIAN" ] && dotask add_qt5_apt_source
 dotask adjust_sysctl
 dotask allow_starting_services
 dotask remove_ssh_host_keys
