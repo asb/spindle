@@ -20,6 +20,7 @@ apt-get install --no-install-recommends -y lxde lxtask menu-xdg gksu
 apt-get install -y mupdf gtk2-engines alsa-utils
 apt-get install -y --no-install-recommends netsurf-gtk zenity xdg-utils
 apt-get install -y desktop-base lxpolkit
+apt-get install -y --no-install-recommends gvfs-backends gvfs-fuse
 EOF
 }
 
