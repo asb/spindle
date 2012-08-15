@@ -202,7 +202,7 @@ case "$1" in
     nohup sh -c "yes | ssh-keygen -q -N '' -t dsa -f /etc/ssh/ssh_host_dsa_key && \
       yes | ssh-keygen -q -N '' -t rsa -f /etc/ssh/ssh_host_rsa_key && \
       yes | ssh-keygen -q -N '' -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key && \
-      update-rc.d ssh enable && \
+      update-rc.d ssh enable && sync && \
       rm /etc/init.d/regenerate_ssh_host_keys && \
       update-rc.d regenerate_ssh_host_keys remove && \
       printf '\nfinished\n' && invoke-rc.d ssh start" > /var/log/regen_ssh_keys.log 2>&1 &
