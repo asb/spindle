@@ -15,7 +15,7 @@ create_partition_table() {
   unit b
   mklabel msdos
   mkpart primary fat32 $(expr 4 \* 1024 \* 1024) $(expr 60 \* 1024 \* 1024 - 1)
-  mkpart primary ext4 $(expr 60 \* 1024 \* 1024) $(expr 1850 \* 1024 \* 1024 - 1)
+  mkpart primary ext4 $(expr 60 \* 1024 \* 1024) 100%
   print
   quit
 EOF
@@ -52,7 +52,7 @@ if ! [ -f "$APT_CACHE_IMG" ]; then
   dotask detach_image_from_nbd $NBD_DEV
   rm "$APT_CACHE_IMG.wip"
 fi
-dotask qemu-img create -f qed $CURIMG 1850M
+dotask qemu-img create -f $IMGFORMAT $CURIMG $SDSIZE
 sudo -v
 dotask attach_image_to_nbd $CURIMG $NBD_DEV
 dotask create_partition_table $NBD_DEV
