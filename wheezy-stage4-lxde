@@ -5,9 +5,9 @@
 
 set -ex
 
-CURIMG=stage4-lxde.qed
-
 . ./common
+
+CURIMG=stage4-lxde.$IMGFORMAT
 
 install_packages() {
   # we may want to break out DEBIAN_FRONTEND=noninteractive
@@ -100,7 +100,7 @@ EOF
 }
 
 cd $WORKDIR
-dotask branch_image ../$OUTDIR/stage3.qed $CURIMG
+dotask branch_image ../$OUTDIR/stage3.$IMGFORMAT $CURIMG
 dotask run_qemu $CURIMG
 dotask mount_apt_cache
 dotask disable_starting_services

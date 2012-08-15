@@ -5,9 +5,9 @@
 
 set -e
 
-CURIMG=stage0.qed
-
 . ./common
+
+CURIMG=stage0.$IMGFORMAT
 
 create_partition_table() {
   # TODO: partition sizes shouldn't be hard-coded
@@ -15,7 +15,7 @@ create_partition_table() {
   unit b
   mklabel msdos
   mkpart primary fat32 $(expr 4 \* 1024 \* 1024) $(expr 60 \* 1024 \* 1024 - 1)
-  mkpart primary ext4 $(expr 60 \* 1024 \* 1024) $(expr 1850 \* 1024 \* 1024 - 1)
+  mkpart primary ext4 $(expr 60 \* 1024 \* 1024) 100%
   print
   quit
 EOF
@@ -30,7 +30,7 @@ do_debootstrap() {
   $1 $2 $DEB_MIRROR
 }
 
-APT_CACHE_IMG=wheezy_apt_cache.qed
+APT_CACHE_IMG=wheezy_apt_cache.$IMGFORMAT
 
 mkdir -p $WORKDIR
 cd $WORKDIR
@@ -39,7 +39,7 @@ cd $WORKDIR
 [ -e "$APT_CACHE_IMG.wip" ] && rm "$APT_CACHE_IMG"
 if ! [ -f "$APT_CACHE_IMG" ]; then
   printf "No apt cache disk image exists. Making one.\n"
-  dotask qemu-img create -f qed $APT_CACHE_IMG 4G
+  dotask qemu-img create -f $IMGFORMAT $APT_CACHE_IMG 4G
   touch "$APT_CACHE_IMG.wip"
   sudo -v
   dotask attach_image_to_nbd $APT_CACHE_IMG $NBD_DEV
@@ -52,7 +52,7 @@ if ! [ -f "$APT_CACHE_IMG" ]; then
   dotask detach_image_from_nbd $NBD_DEV
   rm "$APT_CACHE_IMG.wip"
 fi
-dotask qemu-img create -f qed $CURIMG 1850M
+dotask qemu-img create -f $IMGFORMAT $CURIMG $SDSIZE
 sudo -v
 dotask attach_image_to_nbd $CURIMG $NBD_DEV
 dotask create_partition_table $NBD_DEV
