@@ -5,11 +5,11 @@
 
 set -ex
 
+. ./common
+
 WORKDIR=work
 OUTDIR=out
-CURIMG=stage3.qed
-
-. ./common
+CURIMG=stage3.$IMGFORMAT
 
 configure_apt() {
   onvm_chroot sh -l -ex - <<\EOF
@@ -326,7 +326,7 @@ EOF
 }
 
 cd $WORKDIR
-dotask branch_image ../$OUTDIR/stage2.qed $CURIMG
+dotask branch_image ../$OUTDIR/stage2.$IMGFORMAT $CURIMG
 dotask run_qemu $CURIMG
 dotask mount_apt_cache
 dotask disable_starting_services

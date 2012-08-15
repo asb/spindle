@@ -5,9 +5,9 @@
 
 set -ex
 
-CURIMG=stage2.qed
-
 . ./common
+
+CURIMG=stage2.$IMGFORMAT
 
 # Make changes to /etc/skel before we start adding new users
 modify_etc_skel() {
@@ -317,7 +317,7 @@ download_and_extract_firmware_if_necessary() {
 }
 
 cd $WORKDIR
-dotask branch_image ../$OUTDIR/stage1.qed $CURIMG
+dotask branch_image ../$OUTDIR/stage1.$IMGFORMAT $CURIMG
 dotask run_qemu $CURIMG
 dotask mount_apt_cache
 dotask disable_starting_services

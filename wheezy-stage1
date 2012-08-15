@@ -5,7 +5,9 @@
 
 set -e
 
-CURIMG=stage1.qed
+. ./common
+
+CURIMG=stage1.$IMGFORMAT
 
 # Security for these keys doesn't matter: just using ssh as it's convenient 
 # It's not easy to disable authentication, so just use passwordless keys.
@@ -106,8 +108,6 @@ exec /sbin/oneit -c /dev/ttyAMA0 /bin/ash
 EOF
 )
 
-. ./common
-
 replace_init_sh() {
   printf "%s" "$INIT_SH" > qemu_rootfs/sbin/init.sh
 }
@@ -128,7 +128,7 @@ EOF
 }
 
 cd $WORKDIR
-dotask branch_image ../$OUTDIR/stage0.qed $CURIMG
+dotask branch_image ../$OUTDIR/stage0.$IMGFORMAT $CURIMG
 dotask download_if_necessary http://landley.net/aboriginal/downloads/binaries/simple-root-filesystem/simple-root-filesystem-armv6l.tar.bz2
 dotask download_if_necessary http://landley.net/aboriginal/downloads/binaries/system-image/system-image-armv6l.tar.bz2
 dotask download_if_necessary http://landley.net/aboriginal/downloads/binaries/extras/dropbearmulti-armv6l
