@@ -12,7 +12,7 @@ run_qemu() {
   mkfifo fifo.out fifo.in
   qemu-system-arm -M versatilepb -cpu arm1136-r2 -m 256 -nographic -no-reboot \
         -kernel zImage -hda qemu_rootfs.sqf -drive file=$1,index=1,media=disk,cache=unsafe \
-        -drive file=wheezy_apt_cache.qed,index=2,media=disk,cache=unsafe \
+        -drive file=wheezy_apt_cache.$IMGFORMAT,index=2,media=disk,cache=unsafe \
         -append "root=/dev/sda rw init=/sbin/init.sh panic=1 PATH=/bin:/sbin console=ttyAMA0 HOST=armv6l"\
         -net nic,model=rtl8139 -net user -redir tcp:22000::22 -daemonize -serial pipe:fifo \
         -pidfile qemu.pid
@@ -69,18 +69,18 @@ detach_image_from_nbd() {
 
 inspect_image() {
   cd work
-  qemu-img create -f qed -b ../$1 temp.qed
+  qemu-img create -f $IMGFORMAT -b ../$1 temp.$IMGFORMAT
   # Sigh http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=390433
   trap '[ -p fifo.in ] && shutdown_qemu' EXIT
   trap '[ -p fifo.in ] && shutdown_qemu; trap - INT; kill -INT $$' INT
-  run_qemu temp.qed
+  run_qemu temp.$IMGFORMAT
   ssh_in_to_qemu # -t chroot /mnt bash -l
   shutdown_qemu
   cd $OLDPWD
 }
 
 branch_image() {
-  qemu-img create -f qed -b $1 $2
+  qemu-img create -f $IMGFORMAT -b $1 $2
 }
 
 write_image() {
@@ -90,13 +90,13 @@ write_image() {
 }
 
 convert_image() {
-  qemu-img convert -f qed -O raw $1 $2
+  qemu-img convert -f $IMGFORMAT -O raw $1 $2
 }
 
 export_image_for_release() {
   cd work
-  qemu-img create -f qed -b ../$1 temp.qed
-  run_qemu temp.qed
+  qemu-img create -f $IMGFORMAT -b ../$1 temp.$IMGFORMAT
+  run_qemu temp.$IMGFORMAT
   # Change mirror in sources.list to our preferred one. This will go horribly 
   # wrong if there is more than one entry in sources.list
   onvm_chroot sh -l -ex <<\EOF
@@ -110,7 +110,7 @@ apt-get update
 /etc/init.d/fake-hwclock stop # save current time
 EOF
   shutdown_qemu
-  attach_image_to_nbd temp.qed /dev/nbd0
+  attach_image_to_nbd temp.$IMGFORMAT /dev/nbd0
   sudo zerofree -v /dev/nbd0p2
   mkdir -p rootfs boot
   sudo mount $BOOT_DEV boot
@@ -119,7 +119,7 @@ EOF
   sudo umount $BOOT_DEV
   sudo umount $ROOT_DEV
   detach_image_from_nbd /dev/nbd0
-  convert_image temp.qed ../$2
+  convert_image temp.$IMGFORMAT ../$2
 }
 
 disable_starting_services() {

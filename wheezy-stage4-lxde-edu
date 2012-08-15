@@ -5,11 +5,11 @@
 
 set -ex
 
+. ./common
+
 WORKDIR=work
 OUTDIR=out
-CURIMG=stage4-lxde-edu.qed
-
-. ./common
+CURIMG=stage4-lxde-edu.$IMGFORMAT
 
 install_packages() {
   ssh_in_to_qemu chroot /mnt sh -l -ex - <<EOF
@@ -138,7 +138,7 @@ EOF
 }
 
 cd $WORKDIR
-dotask branch_image ../$OUTDIR/stage4-lxde.qed $CURIMG
+dotask branch_image ../$OUTDIR/stage4-lxde.$IMGFORMAT $CURIMG
 dotask run_qemu $CURIMG
 dotask disable_starting_services
 dotask mount_apt_cache
