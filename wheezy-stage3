@@ -325,6 +325,26 @@ set_default_kernel_modules() {
 EOF
 }
 
+configure_sound() {
+  onvm_chroot sh -e - <<EOF
+cat <<\EOF1 > /etc/asound.conf
+pcm.mmap0 {
+    type mmap_emul;
+    slave {
+      pcm "hw:0,0";
+    }
+}
+
+pcm.!default {
+  type plug;
+  slave {
+    pcm mmap0;
+  }
+}
+EOF1
+EOF
+}
+
 cd $WORKDIR
 dotask branch_image ../$OUTDIR/stage2.$IMGFORMAT $CURIMG
 dotask run_qemu $CURIMG
@@ -350,6 +370,7 @@ dotask adjust_sysctl
 dotask allow_starting_services
 dotask remove_ssh_host_keys
 dotask set_default_kernel_modules
+dotask configure_sound
 dotask update_issue
 dotask fingerprint_debian
 dotask shutdown_qemu
