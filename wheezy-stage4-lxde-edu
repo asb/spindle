@@ -29,71 +29,10 @@ EOF
 setup_python_game_examples() {
   onvm_chroot sh -l -e <<\EOF
 cd /home/pi
-wget http://asbradbury.org/tmp/raspi/python_games.tar.gz
+wget "https://github.com/KenT2/python-games/tarball/master" -O python_games.tar.gz
 tar -xvf python_games.tar.gz
-cd python_games
-wget http://asbradbury.org/tmp/raspi/fix_wormy.patch
-patch -p1 < fix_wormy.patch
-rm fix_wormy.patch
-cat <<\EOF1 > launcher.sh
-#!/bin/sh
-# Thanks to KenT for contributions
-
-RET=0
-SOUND=$(zenity --list --width=350 --height=250 --radiolist \
-  --title="Choose the Audio Output" \
-  --column "Select" --column="Output" TRUE "Leave as is" FALSE "Auto" FALSE "Force Headphones" FALSE "Force HDMI"  )
-RET=$?
-echo $SOUND
-if [ "$SOUND" = "Leave as is" ]; then
-   echo "Leave as is"
-elif [ "$SOUND" = "Auto" ]; then
-   amixer cset numid=3 0
-   echo "Auto set"
-elif [ "$SOUND" = "Force Headphones" ]; then
-   amixer cset numid=3 1
-   echo "Headphones set"
-elif [ "$SOUND" = "Force HDMI" ]; then
-   amixer cset numid=3 2
-   echo "HDMI set"
-else
-   echo "cancel"
-fi
-
-while [ $RET -eq 0 ]; do
-  GAME=$(zenity --width=350 --height=700 --list \
-    --title="Choose the Python game to launch" \
-    --text="Games by Al Sweigart. Manual at inventwithpython.com/pygame" \
-    --column="Script name" --column="Description" \
-    flippy "A game like reversi" \
-    fourinarow "Get four in a row" \
-    gemgem "A tile matching puzzle" \
-    inkspill "Flood the screen with pixels" \
-    memorypuzzle "Test your memory" \
-    simulate "Repeat the pattern" \
-    slidepuzzle "Traditional slide puzzle" \
-    squirrel "Eat the smaller squirrels" \
-    starpusher "Sokoban" \
-    wormy "Snake-like game" \
-    website "inventwithpython.com")
-  RET=$?
-  echo $RET
-  if [ "$RET" -eq 0 ]
-  then
-     if [ "$GAME" = "website" ]
-     then
-        sensible-browser "http://inventwithpython.com/pygame"
-     else
-       if [ "$GAME" != "" ]; then
-          cd /home/pi/python_games
-          python $GAME.py
-       fi
-     fi
-  fi
-done
-EOF1
-chmod +x launcher.sh
-cd ..
+mv KenT2-python-games* python_games
+chmod +x python_games/launcher.sh
 rm python_games.tar.gz
 chown -R pi:pi python_games
 mkdir -p Desktop
