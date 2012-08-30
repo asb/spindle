@@ -3,7 +3,7 @@
 #
 # See LICENSE file for copyright and license details
 
-#RASPBIAN=1
+RASPBIAN=1
 
 if [ -n "$RASPBIAN" ]; then
   TGT_ARCH=armhf
@@ -17,8 +17,8 @@ NBD_DEV=/dev/nbd0
 BOOT_DEV="$NBD_DEV"p1
 ROOT_DEV="$NBD_DEV"p2
 
-IMGFORMAT=qcow2
-SDSIZE=1850M
+IMGFORMAT=qed
+SDSIZE=3700M
 
 # Changing these isn't currently supported
 WORKDIR=work

@@ -120,7 +120,11 @@ apt-get install -y luajit
 apt-get install -y hardlink ca-certificates curl
 apt-get install -y fake-hwclock ntp nfs-common usbutils
 apt-get install -y --no-install-recommends cifs-utils
+echo "deb http://archive.raspberrypi.org/debian/ wheezy main untested" > /etc/apt/sources.list.d/raspi.list
+apt-get update
 apt-get install -y libraspberrypi-dev libraspberrypi-doc
+echo "deb http://archive.raspberrypi.org/debian/ wheezy main" > /etc/apt/sources.list.d/raspi.list
+apt-get update
 # Install stuff for wireless
 apt-get install -y wpasupplicant wireless-tools firmware-atheros firmware-brcm80211 \
   firmware-libertas firmware-ralink firmware-realtek
