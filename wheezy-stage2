@@ -172,9 +172,9 @@ printf "127.0.1.1\traspberrypi\n" >> /etc/hosts
 EOF
 }
 
-disable_eth_renaming() {
+disable_eth_and_wlan_renaming() {
   onvm_chroot sh -l -e - <<EOF
-sed -i -e 's/KERNEL\!="eth\*|/KERNEL\!="/' /lib/udev/rules.d/75-persistent-net-generator.rules
+sed -i -e 's/KERNEL\!="eth\*|ath\*|wlan\*\[0-9\]/KERNEL\!="ath\*/' /lib/udev/rules.d/75-persistent-net-generator.rules
 dpkg-divert --add --local /lib/udev/rules.d/75-persistent-net-generator.rules
 EOF
 }
@@ -329,7 +329,7 @@ dotask configure_fstab
 dotask configure_sources_list
 dotask configure_network_interfaces
 dotask configure_hostname
-dotask disable_eth_renaming
+dotask disable_eth_and_wlan_renaming
 dotask configure_inittab
 dotask adjust_motd
 dotask install_firmware
