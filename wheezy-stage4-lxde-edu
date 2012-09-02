@@ -59,9 +59,10 @@ setup_desktop_icons() {
   onvm_chroot sh -l -e <<\EOF
 cd /usr/share/applications
 sudo -u pi cp -a scratch.desktop midori.desktop idle.desktop idle3.desktop \
-  lxterminal.desktop debian-reference-common.desktop /home/pi/Desktop
+  lxterminal.desktop debian-reference-common.desktop wpa_gui.desktop /home/pi/Desktop
 cd /home/pi/Desktop
 sed -i debian-reference-common.desktop -e "s/^Exec=.*/Exec=env BROWSER=dillo debian-reference/"
+sed -i wpa_gui.desktop -e "s/^Name.*$/Name=WiFi Config/"
 EOF
 }
 
