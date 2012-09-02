@@ -158,6 +158,24 @@ printf 'SUBSYSTEM=="input", GROUP="input", MODE="0660"\n' > /etc/udev/rules.d/99
 EOF
 }
 
+configure_wifi() {
+  onvm_chroot sh -l -e - <<EOF
+cat <<\EOF1 >> /etc/network/interfaces
+
+allow-hotplug wlan0
+iface wlan0 inet manual
+wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+EOF1
+cat <<\EOF2 > /etc/wpa_supplicant/wpa_supplicant.conf
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+EOF2
+chmod 600 /etc/wpa_supplicant/wpa_supplicant.conf
+adduser pi netdev
+EOF
+}
+
 remove_ssh_host_keys() {
   onvm_chroot sh -l -ex - <<\EOF
 rm -f /etc/ssh/ssh_host_*_key*
@@ -360,6 +378,7 @@ dotask install_packages
 dotask configure_ifplugd
 dotask add_pi_user_to_groups
 dotask make_udev_input_rule
+dotask configure_wifi
 #dotask add_opt_vc_lib_to_ld_so
 dotask setup_sudoers
 dotask setup_swap
