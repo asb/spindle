@@ -136,8 +136,8 @@ configure_fstab() {
   onvm_chroot sh -l -e - <<EOF1
 cat <<EOF2 > /etc/fstab
 proc            /proc           proc    defaults          0       0
-/dev/mmcblk0p1  /boot           vfat    defaults          0       0
-/dev/mmcblk0p2  /               ext4    defaults,noatime  0       0
+/dev/mmcblk0p1  /boot           vfat    defaults          0       2
+/dev/mmcblk0p2  /               ext4    defaults,noatime  0       1
 EOF2
 EOF1
 }
