@@ -149,6 +149,13 @@ done
 EOF
 }
 
+configure_useradd() {
+  onvm_chroot sh -l -ex - <<\EOF
+sed -i /etc/default/useradd -e 's/^# SKEL=/SKEL=/'
+sed -i /etc/default/useradd -e 's|^SHELL=.*$|SHELL=/bin/bash|'
+EOF
+}
+
 make_udev_input_rule() {
   onvm_chroot sh -l -e - <<EOF
 printf 'SUBSYSTEM=="input", GROUP="input", MODE="0660"\n' > /etc/udev/rules.d/99-input.rules
@@ -374,6 +381,7 @@ dotask set_debconf_selections
 dotask install_packages
 dotask configure_ifplugd
 dotask add_pi_user_to_groups
+dotask configure_useradd
 dotask make_udev_input_rule
 dotask configure_wifi
 #dotask add_opt_vc_lib_to_ld_so
