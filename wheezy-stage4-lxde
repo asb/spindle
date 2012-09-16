@@ -85,11 +85,18 @@ EOF1
 
 install_and_configure_lightdm() {
   onvm_chroot sh -l -e <<\EOF
-  apt-get install -y lightdm gnome-themes-standard gnome-icon-theme
-  update-rc.d lightdm disable 2
-  sed -i /etc/lightdm/lightdm-gtk-greeter.conf -e "s/^background.*/background=#ffffff/"
-  # TODO: maybe change the computer icon to the Raspberry Pi logo? See 
-  # https://wiki.archlinux.org/index.php/LightDM#Changing_the_Icon
+apt-get install -y lightdm gnome-themes-standard gnome-icon-theme
+update-rc.d lightdm disable 2
+sed -i /etc/lightdm/lightdm-gtk-greeter.conf -e "s/^background.*/background=#ffffff/"
+# TODO: maybe change the computer icon to the Raspberry Pi logo? See 
+# https://wiki.archlinux.org/index.php/LightDM#Changing_the_Icon
+
+# Source /etc/profile and ~/.profile through XSession.d to ensure PATH is set 
+# properly when lightdm is used.
+cat << EOF1 > /etc/X11/Xsession.d/75source-profile
+[ -f /etc/profile ] && . /etc/profile
+[ -f "$HOME/.profile" ] && . "$HOME/.profile"
+EOF1
 EOF
 }
 
