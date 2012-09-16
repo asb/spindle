@@ -111,7 +111,7 @@ apt-get update
 # install some utils
 apt-get install -y ssh locales less fbset sudo psmisc strace module-init-tools ifplugd ed ncdu
 apt-get install -y console-setup keyboard-configuration debconf-utils parted unzip
-apt-get install -y build-essential python bash-completion gdb pkg-config
+apt-get install -y build-essential manpages-dev python bash-completion gdb pkg-config
 # For now, we can include the dev packages qt5 wants
 apt-get install -y --no-install-recommends libfontconfig1-dev libicu-dev libdbus-1-dev libfreetype6-dev \
     libgstreamer-plugins-base0.10-dev libudev-dev libxslt1-dev libsqlite3-dev libssl-dev
