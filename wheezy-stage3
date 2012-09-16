@@ -145,7 +145,7 @@ EOF
 
 add_pi_user_to_groups() {
   onvm_chroot sh -l -ex - <<\EOF
-groupadd -f input
+groupadd -f -r input
 for GRP in adm dialout cdrom audio users sudo video games plugdev input; do
   adduser pi $GRP
 done
