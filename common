@@ -16,6 +16,7 @@ run_qemu() {
         -append "root=/dev/sda rw init=/sbin/init.sh panic=1 PATH=/bin:/sbin console=ttyAMA0 HOST=armv6l"\
         -net nic,model=rtl8139 -net user -redir tcp:22000::22 -daemonize -serial pipe:fifo \
         -pidfile qemu.pid
+  sleep 10
 }
 
 ssh_in_to_qemu() {
@@ -108,6 +109,10 @@ fi
 cp /usr/share/doc/raspi-config/sample_profile_d.sh /etc/profile.d/raspi-config.sh
 apt-get update
 /etc/init.d/fake-hwclock stop # save current time
+#rm /usr/bin/raspi-config
+#cd /usr/bin
+#wget https://raw.github.com/asb/raspi-config/master/raspi-config
+#chmod +x raspi-config
 EOF
   shutdown_qemu
   attach_image_to_nbd temp.$IMGFORMAT /dev/nbd0
