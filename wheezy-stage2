@@ -202,8 +202,7 @@ EOF1
 
 install_firmware() {
   onvm_chroot sh -l -e - <<EOF
-#echo "deb http://asbradbury.org/tmp/raspi/staging_repo/ wheezy main" > /etc/apt/sources.list.d/raspi.list
-echo "deb http://archive.raspberrypi.org/debian/ wheezy main untested" > /etc/apt/sources.list.d/raspi.list
+echo "deb http://archive.raspberrypi.org/debian/ wheezy main" > /etc/apt/sources.list.d/raspi.list
 apt-key add - <<EOF1
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG v1.4.12 (GNU/Linux)
@@ -238,7 +237,7 @@ m++/7s3K3L0zWopdhMVcgg6Nt9gcjzqN1c0gy55L/g==
 EOF1
 apt-get update
 apt-get install -y libraspberrypi-bin libraspberrypi0 raspberrypi-bootloader
-echo "deb http://archive.raspberrypi.org/debian/ wheezy main" > /etc/apt/sources.list.d/raspi.list
+#echo "deb http://archive.raspberrypi.org/debian/ wheezy main" > /etc/apt/sources.list.d/raspi.list
 apt-get update
 cp -a /boot/arm192_start.elf /boot/start.elf # default to 192mb memory split
 echo "dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 \
