@@ -77,6 +77,7 @@ sed -i $ETC_SCHROOT_SPINDLE/nssdatabases -e "s/^shadow$/#shadow/"
 sed -i $ETC_SCHROOT_SPINDLE/nssdatabases -e "s/^group$/#group/"
 
 debootstrap \
+  --arch="$TGT_ARCH" \
   --include="qemu,bash-completion,augeas-tools,debootstrap,less,\
   sudo,parted,openssh-client,e2fsprogs,dosfstools,squashfs-tools,bzip2,git,zerofree" \
   wheezy "$TARGET_DIR" "$DEB_MIRROR" || die "Debootstrap failed"
