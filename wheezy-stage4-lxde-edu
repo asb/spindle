@@ -63,9 +63,21 @@ setup_desktop_icons() {
 cd /usr/share/applications
 sudo -u pi cp -a scratch.desktop midori.desktop idle.desktop idle3.desktop \
   lxterminal.desktop debian-reference-common.desktop wpa_gui.desktop pistore.desktop /home/pi/Desktop
+cd /home/pi
+sudo -u pi wget http://asbradbury.org/tmp/raspi/ocr_pi.png
 cd /home/pi/Desktop
 sed -i debian-reference-common.desktop -e "s/^Exec=.*/Exec=env BROWSER=dillo debian-reference/"
 sed -i wpa_gui.desktop -e "s/^Name.*$/Name=WiFi Config/"
+sudo -u pi cat <<\EOF2 > ocr_resources.desktop
+[Desktop Entry]
+Name=OCR Resources
+Exec=sensible-browser http://www.ocr.org.uk/qualifications/by-subject/ict/raspberry-pi/
+Icon=/home/pi/ocr_pi.png
+Terminal=false
+Type=Application
+Categories=Application;Education;
+StartupNotify=true
+EOF2
 EOF
 }
 
