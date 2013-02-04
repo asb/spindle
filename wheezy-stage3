@@ -120,7 +120,7 @@ apt-get install -y fake-hwclock ntp nfs-common usbutils
 apt-get install -y --no-install-recommends cifs-utils
 echo "deb http://archive.raspberrypi.org/debian/ wheezy main untested" > /etc/apt/sources.list.d/raspi.list
 apt-get update
-apt-get install -y libraspberrypi-dev libraspberrypi-doc
+apt-get install -y libraspberrypi-dev libraspberrypi-doc libfreetype6-dev
 echo "deb http://archive.raspberrypi.org/debian/ wheezy main" > /etc/apt/sources.list.d/raspi.list
 apt-get update
 # Install stuff for wireless
