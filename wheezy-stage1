@@ -129,9 +129,9 @@ EOF
 
 cd $WORKDIR
 dotask branch_image ../$OUTDIR/stage0.$IMGFORMAT $CURIMG
-dotask download_if_necessary http://landley.net/aboriginal/downloads/binaries/simple-root-filesystem/simple-root-filesystem-armv6l.tar.bz2
-dotask download_if_necessary http://landley.net/aboriginal/downloads/binaries/system-image/system-image-armv6l.tar.bz2
-dotask download_if_necessary http://landley.net/aboriginal/downloads/binaries/extras/dropbearmulti-armv6l
+dotask download_if_necessary http://asbradbury.org/tmp/raspi/simple-root-filesystem/simple-root-filesystem-armv6l.tar.bz2
+dotask download_if_necessary http://asbradbury.org/tmp/raspi/system-image-armv6l.tar.bz2
+dotask download_if_necessary http://asbradbury.org/tmp/raspi/dropbearmulti-armv6l
 [ -f zImage ] || tar -xf system-image-armv6l.tar.bz2 --strip-components=1 system-image-armv6l/zImage
 tar -xvf simple-root-filesystem-armv6l.tar.bz2
 rm -rf qemu_rootfs
