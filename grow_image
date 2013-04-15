@@ -51,7 +51,7 @@ losetup -d $LOOP_DEV
 # We know the offset anyway so let's just use losetup directly rather than 
 # bothering with kpartx
 PART_START_BYTES=$((${PART_START%s}*512))
-losetup --offset "$PART_START_BYTES" -v /dev/loop0 "$IMAGEFILE"
+losetup --offset "$PART_START_BYTES" -v $LOOP_DEV "$IMAGEFILE"
 
 # Sanity check
 file -s $LOOP_DEV
