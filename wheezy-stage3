@@ -405,7 +405,8 @@ dotask adjust_sysctl
 dotask allow_starting_services
 dotask remove_ssh_host_keys
 dotask set_default_kernel_modules
-dotask configure_sound
+# Latest firmware does not need mmap emulation, so skip asound.conf creation
+#dotask configure_sound
 dotask update_issue
 dotask fingerprint_debian
 dotask shutdown_qemu
