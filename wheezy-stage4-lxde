@@ -42,8 +42,19 @@ EOF
 
 install_wayland() {
   onvm_chroot sh -l -e - <<\EOF
-apt-get update
-apt-get install -y libwayland0 libwayland-dev
+cd /home/pi
+mkdir tmp
+cd tmp
+wget http://asbradbury.org/tmp/raspi/weston-rpi-20130423-complete.tar.gz
+tar -xvf *.tar.gz
+cd weston-rpi-20130423
+apt-get install libxcb-xfixes0
+dpkg -i *.deb
+cp simple-shm /usr/bin/
+mkdir /root/.config
+cp weston.ini /root/.config/
+cd /home/pi
+rm -rf tmp
 EOF
 }
 
@@ -119,7 +130,7 @@ dotask branch_image ../$OUTDIR/stage3.$IMGFORMAT $CURIMG
 dotask run_qemu $CURIMG
 dotask mount_apt_cache
 dotask disable_starting_services
-#[ -z "$RASPBIAN" ] && dotask install_wayland
+[ -z "$RASPBIAN" ] && dotask install_wayland
 dotask install_packages
 dotask configure_gksu
 [ -n "$RASPBIAN" ] && dotask install_omxplayer
