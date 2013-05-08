@@ -130,7 +130,7 @@ dotask branch_image ../$OUTDIR/stage3.$IMGFORMAT $CURIMG
 dotask run_qemu $CURIMG
 dotask mount_apt_cache
 dotask disable_starting_services
-[ -z "$RASPBIAN" ] && dotask install_wayland
+[ -n "$RASPBIAN" ] && dotask install_wayland
 dotask install_packages
 dotask configure_gksu
 [ -n "$RASPBIAN" ] && dotask install_omxplayer
