@@ -26,9 +26,9 @@ apt-get install -y wpagui
 # Install optimised pixman built from https://github.com/bavison/pixman
 # TODO: get this properly packaged
 cd /usr/lib/arm-linux-gnueabihf
-wget http://asbradbury.org/tmp/raspi/libpixman-1.so.0.29.1
+wget http://asbradbury.org/tmp/raspi/2013_03_27/libpixman-1.so.0.29.3
 rm libpixman-1.so.0
-ln -s libpixman-1.so.0.29.1 libpixman-1.so.0
+ln -s libpixman-1.so.0.29.3 libpixman-1.so.0
 EOF
 }
 

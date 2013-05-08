@@ -338,7 +338,7 @@ apt-get install -y raspi-copies-and-fills
 # TODO: get this packaged properly
 mv /etc/ld.so.preload /etc/ld.so.preload.disable
 cd /tmp
-wget http://asbradbury.org/tmp/raspi/libarmmem.so
+wget http://asbradbury.org/tmp/raspi/2013_03_27/libarmmem.so
 mv libarmmem.so /usr/lib/arm-linux-gnueabihf/libcofi_rpi.so
 EOF
 }
