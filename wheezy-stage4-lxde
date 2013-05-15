@@ -23,6 +23,7 @@ apt-get install -y --no-install-recommends netsurf-gtk zenity xdg-utils
 apt-get install -y desktop-base lxpolkit
 apt-get install -y --no-install-recommends gvfs-backends gvfs-fuse
 apt-get install -y wpagui
+apt-get install -y git-core
 # Install optimised pixman built from https://github.com/bavison/pixman
 # TODO: get this properly packaged
 cd /usr/lib/arm-linux-gnueabihf
