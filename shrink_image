@@ -35,8 +35,6 @@ LOOP_DEV=$(losetup -f)
 PART_START_BYTES=$((${PART_START%s}*512))
 losetup --offset "$PART_START_BYTES" -v $LOOP_DEV "$IMAGEFILE"
 
-bash
-
 # Sanity check
 file -s $LOOP_DEV
 
@@ -47,8 +45,6 @@ resize2fs -M $LOOP_DEV
 EXT4_BLCKCNT=$(sudo tune2fs -l /dev/loop0 | grep "^Block count" | cut -d ":" -f 2 | tr -d ' ')
 EXT4_BLKSIZE=$(sudo tune2fs -l /dev/loop0 | grep "^Block size" | cut -d ":" -f 2 | tr -d ' ')
 EXT4_FS_BYTES=$(($EXT4_BLCKCNT * $EXT4_BLKSIZE))
-
-bash
 
 # Unmount it all
 losetup -d $LOOP_DEV
