@@ -23,7 +23,7 @@ apt-get install -y --no-install-recommends netsurf-gtk zenity xdg-utils
 apt-get install -y desktop-base lxpolkit
 apt-get install -y --no-install-recommends gvfs-backends gvfs-fuse
 apt-get install -y wpagui
-apt-get install -y git-core
+apt-get install -y git-core rpi-update
 EOF
 }
 
