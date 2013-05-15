@@ -43,19 +43,63 @@ EOF
 
 install_wayland() {
   onvm_chroot sh -l -ex - <<\EOF
-cd /home/pi
-mkdir tmp
-cd tmp
-wget http://asbradbury.org/tmp/raspi/weston-rpi-20130423-complete.tar.gz
-tar -xvf *.tar.gz
-cd weston-rpi-20130423
-apt-get install libxcb-xfixes0
-dpkg -i *.deb
-cp simple-shm /usr/bin/
-mkdir /root/.config
-cp weston.ini /root/.config/
-cd /home/pi
-rm -rf tmp
+echo "deb http://raspberrypi.collabora.com wheezy rpi" > /etc/apt/sources.list.d/collabora.list
+apt-key add - <<EOF1
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.13 (GNU/Linux)
+
+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
+=zyWt
+-----END PGP PUBLIC KEY BLOCK-----
+EOF1
+apt-get update
+apt-get install weston
 EOF
 }
 
