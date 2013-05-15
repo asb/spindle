@@ -41,7 +41,7 @@ EOF
 }
 
 install_wayland() {
-  onvm_chroot sh -l -e - <<\EOF
+  onvm_chroot sh -l -ex - <<\EOF
 cd /home/pi
 mkdir tmp
 cd tmp
@@ -130,7 +130,6 @@ dotask branch_image ../$OUTDIR/stage3.$IMGFORMAT $CURIMG
 dotask run_qemu $CURIMG
 dotask mount_apt_cache
 dotask disable_starting_services
-[ -n "$RASPBIAN" ] && dotask install_wayland
 dotask install_packages
 dotask configure_gksu
 [ -n "$RASPBIAN" ] && dotask install_omxplayer
@@ -138,6 +137,7 @@ dotask configure_lxde
 dotask install_and_configure_lightdm
 dotask setup_automounting
 #[ -z "$RASPBIAN" ] && dotask install_qt5
+[ -n "$RASPBIAN" ] && dotask install_wayland
 dotask save_space_using_hardlink
 dotask allow_starting_services
 dotask update_issue
