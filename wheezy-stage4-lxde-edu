@@ -19,14 +19,6 @@ apt-get install -y python3 idle3 python3-tk
 apt-get install -y python3-rpi.gpio
 apt-get install -y debian-reference-en dillo
 apt-get install -y scratch
-
-# Temporary hack: install newer scratch image
-cd /usr/share/scratch
-rm Scratch.image
-wget http://asbradbury.org/tmp/raspi/2013_05_02/Scratch.image
-cd -
-# End of temporary hack
-
 apt-get install -y smartsim penguinspuzzle
 apt-get install -y pistore
 cat <<\EOF1 > /etc/udev/rules.d/40-scratch.rules
