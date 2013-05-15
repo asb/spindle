@@ -24,12 +24,6 @@ apt-get install -y desktop-base lxpolkit
 apt-get install -y --no-install-recommends gvfs-backends gvfs-fuse
 apt-get install -y wpagui
 apt-get install -y git-core
-# Install optimised pixman built from https://github.com/bavison/pixman
-# TODO: get this properly packaged
-cd /usr/lib/arm-linux-gnueabihf
-wget http://asbradbury.org/tmp/raspi/2013_03_27/libpixman-1.so.0.29.3
-rm libpixman-1.so.0
-ln -s libpixman-1.so.0.29.3 libpixman-1.so.0
 EOF
 }
 
@@ -99,7 +93,7 @@ HXWu9eprthyEIX6pmEhqzMViFix7FVozfdn2H4U=
 -----END PGP PUBLIC KEY BLOCK-----
 EOF1
 apt-get update
-apt-get install weston
+apt-get install -y weston
 EOF
 }
 
