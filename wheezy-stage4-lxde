@@ -93,7 +93,7 @@ HXWu9eprthyEIX6pmEhqzMViFix7FVozfdn2H4U=
 -----END PGP PUBLIC KEY BLOCK-----
 EOF1
 apt-get update
-apt-get install -y weston
+apt-get install -y --force-yes weston
 EOF
 }
 
