@@ -109,10 +109,10 @@ fi
 cp /usr/share/doc/raspi-config/sample_profile_d.sh /etc/profile.d/raspi-config.sh
 apt-get update
 /etc/init.d/fake-hwclock stop # save current time
-rm /usr/bin/raspi-config
-cd /usr/bin
-wget https://raw.github.com/asb/raspi-config/master/raspi-config
-chmod +x raspi-config
+#rm /usr/bin/raspi-config
+#cd /usr/bin
+#wget https://raw.github.com/asb/raspi-config/master/raspi-config
+#chmod +x raspi-config
 EOF
   shutdown_qemu
   attach_image_to_nbd temp.$IMGFORMAT /dev/nbd0
