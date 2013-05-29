@@ -114,7 +114,7 @@ apt-get install -y console-setup keyboard-configuration debconf-utils parted unz
 apt-get install -y build-essential manpages-dev python bash-completion gdb pkg-config
 apt-get install -y python-rpi.gpio
 apt-get install -y lua5.1
-apt-get install -y luajit
+[ "$(dpkg --print-architecture)" = armhf ] && apt-get install -y luajit
 apt-get install -y hardlink ca-certificates curl
 apt-get install -y fake-hwclock ntp nfs-common usbutils
 apt-get install -y --no-install-recommends cifs-utils

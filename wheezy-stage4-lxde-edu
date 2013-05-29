@@ -19,8 +19,8 @@ apt-get install -y python3 idle3 python3-tk
 apt-get install -y python3-rpi.gpio
 apt-get install -y debian-reference-en dillo
 apt-get install -y scratch
-apt-get install -y smartsim penguinspuzzle
-apt-get install -y pistore
+[ "$(dpkg --print-architecture)" = armhf ] && apt-get install -y smartsim penguinspuzzle
+[ "$(dpkg --print-architecture)" = armhf ] && apt-get install -y pistore
 cat <<\EOF1 > /etc/udev/rules.d/40-scratch.rules
 ATTRS{idVendor}=="0694", ATTRS{idProduct}=="0003", SUBSYSTEMS=="usb", ACTION=="add", MODE="0666", GROUP="plugdev"
 EOF1
@@ -28,13 +28,15 @@ EOF1
 apt-get install -y python3-numpy
 
 # Install pypy
-cd /home/pi
-mkdir tmp
-cd tmp
-wget https://bitbucket.org/pypy/pypy/downloads/pypy-upstream_2.0~alpha+arm_armhf.deb
-dpkg -i *.deb
-cd /home/pi
-rm -rf tmp
+if [ "$(dpkg --print-architecture)" = armhf ]; then
+  cd /home/pi
+  mkdir tmp
+  cd tmp
+  wget https://bitbucket.org/pypy/pypy/downloads/pypy-upstream_2.0~alpha+arm_armhf.deb
+  dpkg -i *.deb
+  cd /home/pi
+  rm -rf tmp
+fi
 
 EOF
 }
@@ -72,7 +74,8 @@ setup_desktop_icons() {
   onvm_chroot sh -l -e <<\EOF
 cd /usr/share/applications
 sudo -u pi cp -a scratch.desktop midori.desktop idle.desktop idle3.desktop \
-  lxterminal.desktop debian-reference-common.desktop wpa_gui.desktop pistore.desktop /home/pi/Desktop
+  lxterminal.desktop debian-reference-common.desktop wpa_gui.desktop /home/pi/Desktop
+[ "$(dpkg --print-architecture)" = armhf ] && sudo -u pi cp -a pistore.desktop /home/pi/Desktop
 cd /home/pi
 sudo -u pi wget http://asbradbury.org/tmp/raspi/ocr_pi.png
 cd /home/pi/Desktop
