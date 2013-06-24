@@ -150,7 +150,7 @@ sed -i /etc/lightdm/lightdm-gtk-greeter.conf -e "s/^background.*/background=#fff
 
 # Source /etc/profile and ~/.profile through XSession.d to ensure PATH is set 
 # properly when lightdm is used.
-cat << EOF1 > /etc/X11/Xsession.d/75source-profile
+cat <<\EOF1 > /etc/X11/Xsession.d/75source-profile
 [ -f /etc/profile ] && . /etc/profile
 [ -f "$HOME/.profile" ] && . "$HOME/.profile"
 EOF1
