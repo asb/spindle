@@ -44,7 +44,7 @@ Debian and Ubuntu versions right now.
     sudo ./setup_spindle_environment  my_spindle_chroot
     sudo modprobe nbd max_part=16
     schroot -c spindle
-    sudo ./downgrade-qemu
+    sudo ./downgrade_qemu
     ./wheezy-stage0
     ./wheezy-stage1
     ./wheezy-stage2
