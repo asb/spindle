@@ -38,11 +38,13 @@ other packages.
 The following describes how to start building SD card images using spindle.  
 The process isn't massively user friendly for people with no experience at 
 all, but if you're currently doing this by hand then hopefully you'll find it 
-helpful.
+helpful. Note that executing the `downgrade_qemu` script is necessary on most 
+Debian and Ubuntu versions right now.
 
     sudo ./setup_spindle_environment  my_spindle_chroot
     sudo modprobe nbd max_part=16
     schroot -c spindle
+    sudo ./downgrade-qemu
     ./wheezy-stage0
     ./wheezy-stage1
     ./wheezy-stage2
