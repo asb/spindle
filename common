@@ -108,6 +108,8 @@ else
 fi
 cp /usr/share/doc/raspi-config/sample_profile_d.sh /etc/profile.d/raspi-config.sh
 apt-get update
+# Default to a known-good nameserver
+printf "nameserver 8.8.8.8\n" > /etc/resolv.conf
 /etc/init.d/fake-hwclock stop # save current time
 #rm /usr/bin/raspi-config
 #cd /usr/bin

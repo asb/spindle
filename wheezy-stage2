@@ -160,8 +160,8 @@ auto lo
 iface lo inet loopback
 iface eth0 inet dhcp
 EOF2
-# Default to a known-good nameserver (useful for mounting this image over NFS)
-printf "nameserver 8.8.8.8\n" > /etc/resolv.conf
+# Use the qemu default nameserver
+printf "nameserver 10.0.2.3\n" > /etc/resolv.conf
 EOF1
 }
 
