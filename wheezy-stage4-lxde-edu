@@ -21,6 +21,7 @@ apt-get install -y debian-reference-en dillo
 apt-get install -y scratch
 [ "$(dpkg --print-architecture)" = armhf ] && apt-get install -y smartsim penguinspuzzle
 [ "$(dpkg --print-architecture)" = armhf ] && apt-get install -y pistore
+[ "$(dpkg --print-architecture)" = armhf ] && apt-get install -y sonic-pi
 cat <<\EOF1 > /etc/udev/rules.d/40-scratch.rules
 ATTRS{idVendor}=="0694", ATTRS{idProduct}=="0003", SUBSYSTEMS=="usb", ACTION=="add", MODE="0666", GROUP="plugdev"
 EOF1
