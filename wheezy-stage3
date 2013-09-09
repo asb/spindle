@@ -181,6 +181,45 @@ adduser pi netdev
 EOF
 }
 
+apply_noobs_os_config() {
+  onvm_chroot sh -l -ex - <<\EOF
+cat <<\EOF1 > /etc/init.d/apply_noobs_os_config
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          apply_noobs_os_config
+# Required-Start:
+# Required-Stop:
+# Default-Start: 2
+# Default-Stop:
+# Short-Description: Apply config from /boot/os_config.json
+# Description:
+### END INIT INFO
+
+. /lib/lsb/init-functions
+
+set -e
+
+case "$1" in
+  start)
+    log_daemon_msg "Applying config from /boot/os_config.json (if it exists)"
+    if raspi-config --apply-os-config; then
+      rm /etc/init.d/apply_noobs_os_config && update-rc.d apply_noobs_os_config remove
+      log_end_msg 0
+    else
+      log_end_msg 1
+    fi
+    ;;
+  *)
+    echo "Usage: $0 start" >&2
+    exit 3
+    ;;
+esac
+EOF1
+chmod +x /etc/init.d/apply_noobs_os_config
+update-rc.d apply_noobs_os_config start 2
+EOF
+}
+
 remove_ssh_host_keys() {
   onvm_chroot sh -l -ex - <<\EOF
 rm -f /etc/ssh/ssh_host_*_key*
@@ -399,6 +438,7 @@ dotask save_space_using_hardlink
 dotask adjust_sysctl
 dotask allow_starting_services
 dotask remove_ssh_host_keys
+dotask apply_noobs_os_config
 dotask set_default_kernel_modules
 # Latest firmware does not need mmap emulation, so skip asound.conf creation
 #dotask configure_sound
