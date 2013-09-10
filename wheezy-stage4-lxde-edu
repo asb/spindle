@@ -92,6 +92,16 @@ Type=Application
 Categories=Application;Education;
 StartupNotify=true
 EOF2
+sudo -u pi cat <<\EOF3 > shutdown.desktop
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Name=Shutdown
+Comment=Shutdown
+Icon=gnome-logout
+Exec=sh -c "zenity --text 'Do you want to shutdown now?' --question && sudo shutdown -h now"
+NoDisplay=true
+EOF3
 EOF
 }
 
