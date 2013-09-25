@@ -163,10 +163,10 @@ EOF
     {
       "label": "root",
       "filesystem_type": "ext4",
-      "partition_size_nominal": 1790,
+      "partition_size_nominal": 1990,
       "want_maximised": true,
       "mkfs_options": "-O ^huge_file",
-      "uncompressed_tarball_size": 1400
+      "uncompressed_tarball_size": 1600
     }
   ]
 }
@@ -191,13 +191,21 @@ EOF
 {
   "name": "Raspbian",
   "version": "wheezy",
-  "release_date": "2013-09-10",
+  "release_date": "2013-09-25",
   "kernel": "3.6",
   "description": "A community-created port of Debian wheezy, optimised for the Raspberry Pi"
 }
 EOF
 
     cat <<\EOF > ../noobs/release_notes.txt
+2013-09-25:
+  * Update Scratch image for further performance improvements
+  * Include Oracle JDK
+  * At least a 4GiB SD card is now required (see above)
+  * Include PyPy 2.1
+  * Include base piface packages
+  * Update raspi-config to include bugfix for inheriting language settings 
+    from NOOBS
 2013-09-10:
   * Updated to current top of tree firmware
   * Update squeak-vm, including fastblit optimised for the Raspbery Pi
