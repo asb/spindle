@@ -33,6 +33,9 @@ if [ "$(dpkg --print-architecture)" = armhf ]; then
   apt-get install -y pypy-upstream
 fi
 
+apt-get install -y python3-pifacecommon python3-pifacedigitalio \
+  python3-pifacedigital-scratch-handler python-pifacecommon python-pifacedigitalio
+
 EOF
 }
 
