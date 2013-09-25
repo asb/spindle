@@ -18,7 +18,7 @@ BOOT_DEV="$NBD_DEV"p1
 ROOT_DEV="$NBD_DEV"p2
 
 IMGFORMAT=qed
-SDSIZE=1850M
+SDSIZE=2825M
 
 # Changing these isn't currently supported
 WORKDIR=work
