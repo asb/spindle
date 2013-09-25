@@ -30,13 +30,7 @@ apt-get install -y python3-numpy
 
 # Install pypy
 if [ "$(dpkg --print-architecture)" = armhf ]; then
-  cd /home/pi
-  mkdir tmp
-  cd tmp
-  wget https://bitbucket.org/pypy/pypy/downloads/pypy-upstream_2.0~alpha+arm_armhf.deb
-  dpkg -i *.deb
-  cd /home/pi
-  rm -rf tmp
+  apt-get install -y pypy-upstream
 fi
 
 EOF
