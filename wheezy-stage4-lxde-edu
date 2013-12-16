@@ -48,6 +48,50 @@ fi
 EOF
 }
 
+install_wolfram() {
+  onvm_chroot sh -l -ex - <<\EOF
+echo "deb http://repository.wolfram.com/raspbian/ stable non-free" > /etc/apt/sources.list.d/wolfram.list
+apt-key add - <<EOF1
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v2.0.14 (GNU/Linux)
+
+mQINBFKKfy0BEADCh62+PSYjoIAgdHIpskDcwY5ccoHIc4sWFJIDOarBlvHf7w0x
+XcURm8TbCCMlCGH6zpyBhGAERY6J7GbidBBQ/MGpv3YbyBAyDtlj6IFuzVQYVOzI
+L262YugG6iqf+u+YQ4V9EknCLqoMXGAedCnigC7tVQTJtUHAdEcWWNXPVGSrjLVP
+nU3gFPJlKKGThK1jt0ejT3QSZJh25X6wnK/cYs8UF9ub5HyzhsyER3ncbzdPCEBQ
+tfWslS2vquUKba1fivO5DJhWhD3Tebytkm339OSYno3k7gcX2Xeb8oZl2XoaUaeo
+zZFYyiF9hj2RiSl0rP+VBNiZyeinmLsvvN6RdZCxotWp5JeNm+uB1bYR+68BtDet
+4y92fCEotHsWQDAnRmL4nyQS2SPhSZUljeL6B/8D3ho1i3gtLS4hEOfYAU9UvMMU
+S+VAoHFlpX8CNeFCsHKeFpSqISfbzo6OR2yUpZID/BGfF9+rN5rzNtp1RsA/medr
+4KPEiePGY3zBr4H0KTbBE4quVQiZoPWOV1DCxPow9N2V2mR5f3c1XXbr5Ldrymx9
+bmFpWcNbK0ODEOFFirUKjyJT7ZZr1ai9RUQDqfm1qlOjtRJQuwCH7qegvOLL7Tzc
+MQRQa21uIgefqoY7/7Nopi33I+gnIVF6TYAp+3JxAVWCQY+Yw7GBaCW/twARAQAB
+tFVXb2xmcmFtIFJlc2VhcmNoLCBJbmMuIChXb2xmcmFtRW5naW5lIFJhc3BiZXJ5
+IFBpIHNpZ25pbmcga2V5KSA8cmFzcGJpYW5Ad29sZnJhbS5jb20+iQI4BBMBAgAi
+BQJSin8tAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBXT6dOXLtCIlkx
+D/4iHq/peQ2Esl/ThCOo2aCBaSF/6NCcgGt0lc4Ju3pVGsCljpxrloOZKw4Pyq3j
+f0LrYB9zi5YFDop02cejiNAg4KwpmY6TzS8n3p4rWtO6pa9U9OrZdrc1+VzIYlBj
+OWsjjOXF311TMRvYbjZTvx0CbXz27T4AeZEzvqoHsJqjcDURHRgXdcoOcB6Gme85
+or5Ht+C+mqzDhkJZIFux+MCj7S9hDutsuydcr9ZpzfPU/poL/GGQVUsZKS6CGZ9F
+PDB28CYUK34Qzbf/g0rhlpeD+ui4JbiEyNeUkl/oPiFZbuYP9LVw4p2Iuhqc/a3L
+jy9Qhh0FaLqfsVe89uPeJmYB9dPgHlO97gye7LAvz/GB8kNPky/sVacPYhlID3YG
+R5ysiX7xMVgCUMI3v7ecBcSYmrSOGtOD2ZuW3jPIhl6DGN7+MQwhErNryB62LyPf
+8c2PmQ+2B7gQK326NaWX25BS9JinFCtXk/NmCMVj+eckigQ1DmTG4rges9Q4LmDL
+fsQKUHwDnzlU3G+NdSSQt9CyQnhFmviu2Mehzro4s4/i8FakZz6qrB/pL13ezbcm
+MWg3gCdLiMK+jC+kFeP68yOLEbF5MSQJMPNDCZr9CJOUxMK1V9RwwhxbjBOcGnLP
+VS7hKUeRKsJDKozRK+ge3vHdFpcDq1U3THdWwVw5p6zgFQ==
+=SweU
+-----END PGP PUBLIC KEY BLOCK-----
+EOF1
+apt-get update
+debconf-set-selections <<SELEOF
+wolfram-engine  shared/accepted-wolfram-eula  boolean true
+SELEOF
+
+apt-get install -y wolfram-engine
+EOF
+}
+
 setup_python_game_examples() {
   onvm_chroot sh -l -e <<\EOF
 cd /home/pi
@@ -82,7 +126,8 @@ setup_desktop_icons() {
 cd /usr/share/applications
 sudo -u pi cp -a scratch.desktop midori.desktop idle.desktop idle3.desktop \
   lxterminal.desktop debian-reference-common.desktop wpa_gui.desktop /home/pi/Desktop
-[ "$(dpkg --print-architecture)" = armhf ] && sudo -u pi cp -a pistore.desktop /home/pi/Desktop
+[ "$(dpkg --print-architecture)" = armhf ] && sudo -u pi cp -a pistore.desktop \
+  wolfram-mathematica.desktop /home/pi/Desktop
 cd /home/pi
 sudo -u pi wget http://asbradbury.org/tmp/raspi/ocr_pi.png
 cd /home/pi/Desktop
@@ -128,6 +173,7 @@ dotask run_qemu $CURIMG
 dotask disable_starting_services
 dotask mount_apt_cache
 dotask install_packages
+dotask install_wolfram
 dotask setup_python_game_examples
 dotask setup_desktop_icons
 dotask hide_redundant_idle_menu_entries
