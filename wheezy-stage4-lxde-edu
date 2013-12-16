@@ -173,7 +173,7 @@ dotask run_qemu $CURIMG
 dotask disable_starting_services
 dotask mount_apt_cache
 dotask install_packages
-dotask install_wolfram
+[ -n "$RASPBIAN" ] && dotask install_wolfram
 dotask setup_python_game_examples
 dotask setup_desktop_icons
 dotask hide_redundant_idle_menu_entries
