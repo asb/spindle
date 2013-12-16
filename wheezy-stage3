@@ -112,7 +112,7 @@ apt-get update
 apt-get install -y ssh locales less fbset sudo psmisc strace module-init-tools ifplugd ed ncdu
 apt-get install -y console-setup keyboard-configuration debconf-utils parted unzip
 apt-get install -y build-essential manpages-dev python bash-completion gdb pkg-config
-apt-get install -y python-rpi.gpio
+apt-get install -y python-rpi.gpio v4l-utils
 apt-get install -y lua5.1
 [ "$(dpkg --print-architecture)" = armhf ] && apt-get install -y luajit
 apt-get install -y hardlink ca-certificates curl
