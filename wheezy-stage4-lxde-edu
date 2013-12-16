@@ -39,11 +39,7 @@ apt-get install -y python3-pifacecommon python3-pifacedigitalio \
 
 
 if [ "$(dpkg --print-architecture)" = armhf ]; then
-  wget http://asbradbury.org/tmp/raspi/oracle-java7-jdk_1.7.0+update40_armhf.deb
-  dpkg -i oracle-java*.deb
-  apt-get install -f
-  apt-get install -y java-common
-  rm oracle-java*.deb
+  apt-get install -y java-common oracle-java7-jdk
 fi
 
 EOF

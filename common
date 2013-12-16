@@ -123,6 +123,7 @@ EOF
   sudo mount $BOOT_DEV boot
   sudo mount $ROOT_DEV rootfs
   sudo cp rootfs/etc/rpi-issue boot/issue.txt
+  sudo wget http://asbradbury.org/tmp/raspi/oracle_license.txt -O boot/LICENSE.oracle
   [ -n "$RASPBIAN" ] && sudo mv rootfs/etc/ld.so.preload.disable rootfs/etc/ld.so.preload
   if [ -n "$NOOBS" ]; then
     mkdir -p ../noobs
