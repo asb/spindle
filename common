@@ -164,10 +164,10 @@ EOF
     {
       "label": "root",
       "filesystem_type": "ext4",
-      "partition_size_nominal": 1990,
+      "partition_size_nominal": 2290,
       "want_maximised": true,
       "mkfs_options": "-O ^huge_file",
-      "uncompressed_tarball_size": 1600
+      "uncompressed_tarball_size": 1900
     }
   ]
 }
@@ -192,13 +192,26 @@ EOF
 {
   "name": "Raspbian",
   "version": "wheezy",
-  "release_date": "2013-09-25",
-  "kernel": "3.6",
+  "release_date": "2013-12-20",
+  "kernel": "3.10",
   "description": "A community-created port of Debian wheezy, optimised for the Raspberry Pi"
 }
 EOF
 
     cat <<\EOF > ../noobs/release_notes.txt
+2013-12-20:
+  * Firmware updated, includes V4L2 fixes
+  * Update omxplayer
+2013-12-18:
+  * Firmware updated and now using kernel 3.10. Many, many improvements
+  * fbturbo XOrg driver is now included and enabled by default. Thanks to 
+    ssvb https://github.com/ssvb/xf86-video-fbturbo
+  * Update Scratch image with further bug fixes
+  * Include Wolfram Mathematica
+  * Update to PyPy 2.2
+  * Update omxplayer
+  * Include v4l-utils for use with experimental V4L2 Raspberry Pi camera driver
+  * Update squeak-vm to fix issues with loading JPEGs
 2013-09-25:
   * Update Scratch image for further performance improvements
   * Include Oracle JDK
