@@ -143,7 +143,8 @@ EOF1
 
 install_and_configure_lightdm() {
   onvm_chroot sh -l -e <<\EOF
-apt-get install -y lightdm gnome-themes-standard gnome-icon-theme
+apt-get install --no-install-recommends -y lightdm gnome-themes-standard-data gnome-icon-theme
+apt-get install -y policykit-1
 update-rc.d lightdm disable 2
 sed -i /etc/lightdm/lightdm-gtk-greeter.conf -e "s/^background.*/background=#ffffff/"
 # TODO: maybe change the computer icon to the Raspberry Pi logo? See 
