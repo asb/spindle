@@ -164,10 +164,10 @@ EOF
     {
       "label": "root",
       "filesystem_type": "ext4",
-      "partition_size_nominal": 2290,
+      "partition_size_nominal": 2210,
       "want_maximised": true,
       "mkfs_options": "-O ^huge_file",
-      "uncompressed_tarball_size": 1900
+      "uncompressed_tarball_size": 1820
     }
   ]
 }
@@ -192,13 +192,16 @@ EOF
 {
   "name": "Raspbian",
   "version": "wheezy",
-  "release_date": "2013-12-20",
+  "release_date": "2014-01-07",
   "kernel": "3.10",
   "description": "A community-created port of Debian wheezy, optimised for the Raspberry Pi"
 }
 EOF
 
     cat <<\EOF > ../noobs/release_notes.txt
+2014-01-07:
+  * Firmware updated
+  * Some space saved on the root filesystem
 2013-12-20:
   * Firmware updated, includes V4L2 fixes
   * Update omxplayer
