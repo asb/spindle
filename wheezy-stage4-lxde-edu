@@ -17,7 +17,7 @@ apt-get update
 apt-get install -y python idle python-pygame python-tk
 apt-get install -y python3 idle3 python3-tk
 apt-get install -y python3-rpi.gpio
-apt-get install -y debian-reference-en dillo
+apt-get install -y debian-reference-en dillo x2x
 apt-get install -y scratch
 apt-get install -y --no-install-recommends timidity # needed for some python game examples
 [ "$(dpkg --print-architecture)" = armhf ] && apt-get install -y smartsim penguinspuzzle
