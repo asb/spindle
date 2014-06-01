@@ -110,6 +110,7 @@ cp /usr/share/doc/raspi-config/sample_profile_d.sh /etc/profile.d/raspi-config.s
 apt-get update
 # Default to a known-good nameserver
 printf "nameserver 8.8.8.8\n" > /etc/resolv.conf
+echo "blacklist snd-soc-bcm2708-i2s" >> /etc/modprobe.d/raspi-blacklist.conf
 /etc/init.d/fake-hwclock stop # save current time
 #rm /usr/bin/raspi-config
 #cd /usr/bin
@@ -192,13 +193,17 @@ EOF
 {
   "name": "Raspbian",
   "version": "wheezy",
-  "release_date": "2014-01-07",
-  "kernel": "3.10",
+  "release_date": "2014-06-01",
+  "kernel": "3.12",
   "description": "A community-created port of Debian wheezy, optimised for the Raspberry Pi"
 }
 EOF
 
     cat <<\EOF > ../noobs/release_notes.txt
+2014-06-01:
+  * Many, many firmware updates with major USB improvements
+  * pyserial installed by default
+  * picamera installed by default
 2014-01-07:
   * Firmware updated
   * Some space saved on the root filesystem
