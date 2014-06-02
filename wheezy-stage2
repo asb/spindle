@@ -290,7 +290,6 @@ cat <<EOF2 > /etc/modprobe.d/raspi-blacklist.conf
 
 blacklist spi-bcm2708
 blacklist i2c-bcm2708
-blacklist snd-soc-bcm2708-i2s
 EOF2
 cat <<EOF3 > /etc/modprobe.d/ipv6.conf
 # Don't load ipv6 by default
