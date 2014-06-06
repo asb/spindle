@@ -240,7 +240,7 @@ apt-get update
 apt-get install -y libraspberrypi-bin libraspberrypi0 raspberrypi-bootloader
 echo "deb http://archive.raspberrypi.org/debian/ wheezy main" > /etc/apt/sources.list.d/raspi.list
 apt-get update
-echo "dwc_otg.lpm_enable=0 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 \
+echo "dwc_otg.lpm_enable=0 console=ttyAMA0,115200 \
 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait" > /boot/cmdline.txt
 cat <<EOF1 > /boot/config.txt
 # uncomment if you get no picture on HDMI for a default "safe" mode
