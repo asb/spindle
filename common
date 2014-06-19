@@ -127,8 +127,8 @@ EOF
   [ -n "$RASPBIAN" ] && sudo mv rootfs/etc/ld.so.preload.disable rootfs/etc/ld.so.preload
   if [ -n "$NOOBS" ]; then
     mkdir -p ../noobs
-    sudo tar -C boot -czf ../noobs/boot.tar.gz --preserve .
-    sudo tar -C rootfs -czf ../noobs/root.tar.gz --preserve .
+    sudo tar -C boot -cJf ../noobs/boot.tar.xz --preserve .
+    sudo tar -C rootfs -cJf ../noobs/root.tar.xz --preserve .
     cat <<\EOF > ../noobs/partition_setup.sh
 #!/bin/sh
 
@@ -192,14 +192,14 @@ EOF
 {
   "name": "Raspbian",
   "version": "wheezy",
-  "release_date": "2014-06-01",
+  "release_date": "2014-06-02",
   "kernel": "3.12",
   "description": "A community-created port of Debian wheezy, optimised for the Raspberry Pi"
 }
 EOF
 
     cat <<\EOF > ../noobs/release_notes.txt
-2014-06-01:
+2014-06-02:
   * Many, many firmware updates with major USB improvements
   * pyserial installed by default
   * picamera installed by default
