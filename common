@@ -192,13 +192,15 @@ EOF
 {
   "name": "Raspbian",
   "version": "wheezy",
-  "release_date": "2014-06-02",
+  "release_date": "2014-06-20",
   "kernel": "3.12",
   "description": "A community-created port of Debian wheezy, optimised for the Raspberry Pi"
 }
 EOF
 
     cat <<\EOF > ../noobs/release_notes.txt
+2014-06-20:
+  * New firmware with various fixes, and kernel bugfix
 2014-06-02:
   * Many, many firmware updates with major USB improvements
   * pyserial installed by default
