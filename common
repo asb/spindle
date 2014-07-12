@@ -134,7 +134,7 @@ EOF
 
 set -ex
 
-if [ -z "$part1" ] || [ -z "$part2"]; then
+if [ -z "$part1" ] || [ -z "$part2" ]; then
   printf "Error: missing environment variable part1 or part2\n" 1>&2
   exit 1
 fi
