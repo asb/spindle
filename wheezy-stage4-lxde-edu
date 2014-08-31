@@ -41,7 +41,7 @@ apt-get install -y python3-pifacecommon python3-pifacedigitalio \
 
 
 if [ "$(dpkg --print-architecture)" = armhf ]; then
-  apt-get install -y java-common oracle-java7-jdk
+  apt-get install -y java-common oracle-java8-jdk
   apt-get install -y minecraft-pi python-minecraftpi
 fi
 
