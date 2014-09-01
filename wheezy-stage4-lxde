@@ -15,8 +15,7 @@ install_packages() {
 apt-get update
 apt-get install --no-install-recommends -y xserver-xorg-video-fbdev
 apt-get install --no-install-recommends -y xserver-xorg xinit
-apt-get install --no-install-recommends -y midori
-sed -i /etc/xdg/midori/search -e '/duckduckgo.com/s|$|\&t=raspberrypi|'
+apt-get install --no-install-recommends -y epiphany-browser cgroup-bin
 apt-get install --no-install-recommends -y lxde lxtask menu-xdg gksu
 apt-get install -y xserver-xorg-video-fbturbo
 apt-get install -y xpdf gtk2-engines alsa-utils
