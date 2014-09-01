@@ -245,9 +245,9 @@ apt-get update
 echo "dwc_otg.lpm_enable=0 console=ttyAMA0,115200 \
 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait" > /boot/cmdline.txt
 cat <<EOF1 > /boot/config.txt
-# for more options and information see http://elinux.org/RPi_config.txt
-# some settings may impact device functionality. see link above for details
-# e.g. gpu_mem must be at least 32 for codec_enabled to take effect
+# For more options and information see 
+# http://www.raspberrypi.org/documentation/configuration/config-txt.md
+# Some settings may impact device functionality. See link above for details
 
 # uncomment if you get no picture on HDMI for a default "safe" mode
 #hdmi_safe=1
