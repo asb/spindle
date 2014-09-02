@@ -133,7 +133,7 @@ cd /usr/share/applications
 sudo -u pi cp -a scratch.desktop epiphany-browser.desktop idle.desktop idle3.desktop \
   lxterminal.desktop debian-reference-common.desktop wpa_gui.desktop /home/pi/Desktop
 [ "$(dpkg --print-architecture)" = armhf ] && sudo -u pi cp -a pistore.desktop \
-  wolfram-mathematica.desktop wolfram-language.desktop /home/pi/Desktop
+  wolfram-mathematica.desktop wolfram-language.desktop sonic-pi.desktop minecraft-pi.desktop /home/pi/Desktop
 cd /home/pi
 sudo -u pi wget http://asbradbury.org/tmp/raspi/ocr_pi.png
 cd /home/pi/Desktop
