@@ -15,6 +15,9 @@ install_packages() {
 apt-get update
 apt-get install --no-install-recommends -y xserver-xorg-video-fbdev
 apt-get install --no-install-recommends -y xserver-xorg xinit
+apt-get install -y gstreamer1.0-x gstreamer1.0-omx gstreamer1.0-plugins-base \
+  gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-alsa \
+  gstreamer1.0-libav
 apt-get install --no-install-recommends -y epiphany-browser cgroup-bin
 apt-get install --no-install-recommends -y lxde lxtask menu-xdg gksu
 apt-get install -y xserver-xorg-video-fbturbo
