@@ -131,6 +131,7 @@ update-rc.d hwclock.sh disable
 # Don't need to start these by default, wastes boot time
 update-rc.d nfs-common disable
 update-rc.d rpcbind disable
+apt-get install -y dosfstools
 EOF
 }
 
