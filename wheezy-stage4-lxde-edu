@@ -22,6 +22,7 @@ apt-get install -y python-serial python3-serial
 apt-get install -y python-picamera python3-picamera
 apt-get install -y debian-reference-en dillo x2x
 apt-get install -y scratch
+apt-get install -y ruby
 apt-get install -y --no-install-recommends timidity # needed for some python game examples
 [ "$(dpkg --print-architecture)" = armhf ] && apt-get install -y smartsim penguinspuzzle
 [ "$(dpkg --print-architecture)" = armhf ] && apt-get install -y pistore
