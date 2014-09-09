@@ -164,10 +164,10 @@ EOF
     {
       "label": "root",
       "filesystem_type": "ext4",
-      "partition_size_nominal": 2210,
+      "partition_size_nominal": 2500,
       "want_maximised": true,
       "mkfs_options": "-O ^huge_file",
-      "uncompressed_tarball_size": 1820
+      "uncompressed_tarball_size": 2280
     }
   ]
 }
@@ -192,13 +192,21 @@ EOF
 {
   "name": "Raspbian",
   "version": "wheezy",
-  "release_date": "2014-06-20",
+  "release_date": "2014-09-09",
   "kernel": "3.12",
   "description": "A community-created port of Debian wheezy, optimised for the Raspberry Pi"
 }
 EOF
 
     cat <<\EOF > ../noobs/release_notes.txt
+2014-09-09:
+  * New firmware with various fixes and improvements
+  * Minecraft Pi pre-installed
+  * Sonic Pi upgraded to 2.0
+  * Include Epiphany browser work from Collabora
+  * Switch to Java 8 from Java 7
+  * Updated Mathematica
+  * Misc minor configuration changes
 2014-06-20:
   * New firmware with various fixes, and kernel bugfix
 2014-06-02:
