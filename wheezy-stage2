@@ -151,6 +151,8 @@ configure_sources_list() {
   fi
   onvm_chroot sh -l -e - <<EOF
 printf "deb $DEB_MIRROR wheezy $SECTIONS\n" > /etc/apt/sources.list
+printf "# Uncomment line below then 'apt-get update' to enable 'apt-get source'\n" >> /etc/apt/sources.list
+printf "#deb-src $DEB_MIRROR wheezy $SECTIONS\n" >> /etc/apt/sources.list
 EOF
 }
 
