@@ -21,7 +21,8 @@ apt-get install -y python3-rpi.gpio
 apt-get install -y python-serial python3-serial
 apt-get install -y python-picamera python3-picamera
 apt-get install -y debian-reference-en dillo x2x
-apt-get install -y scratch
+apt-get install -y scratch nuscratch
+apt-get install -y raspberrypi-ui-mods
 apt-get install -y --no-install-recommends timidity # needed for some python game examples
 [ "$(dpkg --print-architecture)" = armhf ] && apt-get install -y smartsim penguinspuzzle
 [ "$(dpkg --print-architecture)" = armhf ] && apt-get install -y pistore
@@ -51,39 +52,6 @@ EOF
 
 install_wolfram() {
   onvm_chroot sh -l -ex - <<\EOF
-echo "deb http://repository.wolfram.com/raspbian/ stable non-free" > /etc/apt/sources.list.d/wolfram.list
-apt-key add - <<EOF1
------BEGIN PGP PUBLIC KEY BLOCK-----
-Version: GnuPG v2.0.14 (GNU/Linux)
-
-mQINBFKKfy0BEADCh62+PSYjoIAgdHIpskDcwY5ccoHIc4sWFJIDOarBlvHf7w0x
-XcURm8TbCCMlCGH6zpyBhGAERY6J7GbidBBQ/MGpv3YbyBAyDtlj6IFuzVQYVOzI
-L262YugG6iqf+u+YQ4V9EknCLqoMXGAedCnigC7tVQTJtUHAdEcWWNXPVGSrjLVP
-nU3gFPJlKKGThK1jt0ejT3QSZJh25X6wnK/cYs8UF9ub5HyzhsyER3ncbzdPCEBQ
-tfWslS2vquUKba1fivO5DJhWhD3Tebytkm339OSYno3k7gcX2Xeb8oZl2XoaUaeo
-zZFYyiF9hj2RiSl0rP+VBNiZyeinmLsvvN6RdZCxotWp5JeNm+uB1bYR+68BtDet
-4y92fCEotHsWQDAnRmL4nyQS2SPhSZUljeL6B/8D3ho1i3gtLS4hEOfYAU9UvMMU
-S+VAoHFlpX8CNeFCsHKeFpSqISfbzo6OR2yUpZID/BGfF9+rN5rzNtp1RsA/medr
-4KPEiePGY3zBr4H0KTbBE4quVQiZoPWOV1DCxPow9N2V2mR5f3c1XXbr5Ldrymx9
-bmFpWcNbK0ODEOFFirUKjyJT7ZZr1ai9RUQDqfm1qlOjtRJQuwCH7qegvOLL7Tzc
-MQRQa21uIgefqoY7/7Nopi33I+gnIVF6TYAp+3JxAVWCQY+Yw7GBaCW/twARAQAB
-tFVXb2xmcmFtIFJlc2VhcmNoLCBJbmMuIChXb2xmcmFtRW5naW5lIFJhc3BiZXJ5
-IFBpIHNpZ25pbmcga2V5KSA8cmFzcGJpYW5Ad29sZnJhbS5jb20+iQI4BBMBAgAi
-BQJSin8tAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBXT6dOXLtCIlkx
-D/4iHq/peQ2Esl/ThCOo2aCBaSF/6NCcgGt0lc4Ju3pVGsCljpxrloOZKw4Pyq3j
-f0LrYB9zi5YFDop02cejiNAg4KwpmY6TzS8n3p4rWtO6pa9U9OrZdrc1+VzIYlBj
-OWsjjOXF311TMRvYbjZTvx0CbXz27T4AeZEzvqoHsJqjcDURHRgXdcoOcB6Gme85
-or5Ht+C+mqzDhkJZIFux+MCj7S9hDutsuydcr9ZpzfPU/poL/GGQVUsZKS6CGZ9F
-PDB28CYUK34Qzbf/g0rhlpeD+ui4JbiEyNeUkl/oPiFZbuYP9LVw4p2Iuhqc/a3L
-jy9Qhh0FaLqfsVe89uPeJmYB9dPgHlO97gye7LAvz/GB8kNPky/sVacPYhlID3YG
-R5ysiX7xMVgCUMI3v7ecBcSYmrSOGtOD2ZuW3jPIhl6DGN7+MQwhErNryB62LyPf
-8c2PmQ+2B7gQK326NaWX25BS9JinFCtXk/NmCMVj+eckigQ1DmTG4rges9Q4LmDL
-fsQKUHwDnzlU3G+NdSSQt9CyQnhFmviu2Mehzro4s4/i8FakZz6qrB/pL13ezbcm
-MWg3gCdLiMK+jC+kFeP68yOLEbF5MSQJMPNDCZr9CJOUxMK1V9RwwhxbjBOcGnLP
-VS7hKUeRKsJDKozRK+ge3vHdFpcDq1U3THdWwVw5p6zgFQ==
-=SweU
------END PGP PUBLIC KEY BLOCK-----
-EOF1
 apt-get update
 debconf-set-selections <<SELEOF
 wolfram-engine  shared/accepted-wolfram-eula  boolean true
@@ -102,21 +70,6 @@ mv KenT2-python-games* python_games
 chmod +x python_games/launcher.sh
 rm python_games.tar.gz
 chown -R pi:pi python_games
-mkdir -p Desktop
-cd Desktop
-cat <<\EOF2 > python-games.desktop
-[Desktop Entry]
-Name=Python Games
-Comment=From http://inventwithpython.com/pygame/
-Exec=sh -c $HOME/python_games/launcher.sh
-Icon=/usr/share/pixmaps/python.xpm
-Terminal=false
-Type=Application
-Categories=Application;Games;
-StartupNotify=true
-EOF2
-cd ..
-chown -R pi:pi Desktop
 EOF
 }
 
@@ -124,37 +77,8 @@ EOF
 # setup_python_game_examples
 setup_desktop_icons() {
   onvm_chroot sh -l -e <<\EOF
-cd /usr/share/applications
-sudo -u pi cp -a scratch.desktop epiphany-browser.desktop idle.desktop idle3.desktop \
-  lxterminal.desktop debian-reference-common.desktop wpa_gui.desktop /home/pi/Desktop
-[ "$(dpkg --print-architecture)" = armhf ] && sudo -u pi cp -a pistore.desktop \
-  wolfram-mathematica.desktop wolfram-language.desktop sonic-pi.desktop minecraft-pi.desktop /home/pi/Desktop
-cd /home/pi
-sudo -u pi wget http://asbradbury.org/tmp/raspi/ocr_pi.png
-cd /home/pi/Desktop
-sed -i debian-reference-common.desktop -e "s/^Exec=.*/Exec=env BROWSER=dillo debian-reference/"
-sed -i wpa_gui.desktop -e "s/^Name.*$/Name=WiFi Config/"
-cat <<\EOF2 > ocr_resources.desktop
-[Desktop Entry]
-Name=OCR Resources
-Exec=sensible-browser http://www.ocr.org.uk/qualifications/by-subject/ict/raspberry-pi/
-Icon=/home/pi/ocr_pi.png
-Terminal=false
-Type=Application
-Categories=Application;Education;
-StartupNotify=true
-EOF2
-cat <<\EOF3 > shutdown.desktop
-[Desktop Entry]
-Encoding=UTF-8
-Type=Application
-Name=Shutdown
-Comment=Shutdown
-Icon=gnome-logout
-Exec=sh -c "zenity --text 'Do you want to shutdown now?' --question && sudo shutdown -h now"
-NoDisplay=true
-EOF3
-chown pi *.desktop
+# We don't want desktop icons any more
+rm -rf /home/pi/Desktop
 EOF
 }
 
