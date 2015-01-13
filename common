@@ -115,6 +115,12 @@ printf "nameserver 8.8.8.8\n" > /etc/resolv.conf
 #cd /usr/bin
 #wget https://raw.github.com/asb/raspi-config/master/raspi-config
 #chmod +x raspi-config
+cat <<EOF1 > /etc/apt/sources.list.d/raspi.list
+deb http://archive.raspberrypi.org/debian/ wheezy main
+# Uncomment line below then 'apt-get update' to enable 'apt-get source'
+#deb-src http://archive.raspberrypi.org/debian/ wheezy main
+EOF1
+apt-get update
 EOF
   shutdown_qemu
   attach_image_to_nbd temp.$IMGFORMAT /dev/nbd0
@@ -192,13 +198,22 @@ EOF
 {
   "name": "Raspbian",
   "version": "wheezy",
-  "release_date": "2014-09-09",
+  "release_date": "2014-12-24",
   "kernel": "3.12",
   "description": "A community-created port of Debian wheezy, optimised for the Raspberry Pi"
 }
 EOF
 
     cat <<\EOF > ../noobs/release_notes.txt
+2014-12-24:
+  * Fix regression with omission of python-pygame
+2014-12-22:
+  * New firmware with variosu fixes and improvements
+  * New UI configuration for lxde
+  * Various package updates
+  * python3-pygame preinstalled
+  * 'nuscratch', scratch running on the Cog StackVM
+  * Misc other changes
 2014-09-09:
   * New firmware with various fixes and improvements
   * Minecraft Pi pre-installed
