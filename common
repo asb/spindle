@@ -198,13 +198,25 @@ EOF
 {
   "name": "Raspbian",
   "version": "wheezy",
-  "release_date": "2014-12-24",
-  "kernel": "3.12",
+  "release_date": "2015-02-16",
+  "kernel": "3.18",
   "description": "A community-created port of Debian wheezy, optimised for the Raspberry Pi"
 }
 EOF
 
     cat <<\EOF > ../noobs/release_notes.txt
+2015-02-16:
+  * Newer firmware with various fixes
+  * New Sonic Pi release
+  * Pi2 compatible RPi.GPIO
+  * Updated Wolfram Mathematica
+2015-01-31:
+  * Support for Pi2
+  * Newer firmware
+  * New Sonic Pi release
+  * Updated Scratch
+  * New Wolfram Mathematica release
+  * Updated Epiphany
 2014-12-24:
   * Fix regression with omission of python-pygame
 2014-12-22:
