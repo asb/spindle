@@ -292,14 +292,14 @@ cat <<EOF1 > /boot/config.txt
 #arm_freq=800
 
 EOF1
-cat <<EOF2 > /etc/modprobe.d/raspi-blacklist.conf
-# blacklist spi and i2c by default (many users don't need them)
+# cat <<EOF2 > /etc/modprobe.d/raspi-blacklist.conf
+# # blacklist spi and i2c by default (many users don't need them)
 
-blacklist spi-bcm2708
-blacklist i2c-bcm2708
-blacklist snd-soc-pcm512x
-blacklist snd-soc-wm8804
-EOF2
+# blacklist spi-bcm2708
+# blacklist i2c-bcm2708
+# blacklist snd-soc-pcm512x
+# blacklist snd-soc-wm8804
+# EOF2
 cat <<EOF3 > /etc/modprobe.d/ipv6.conf
 # Don't load ipv6 by default
 alias net-pf-10 off
