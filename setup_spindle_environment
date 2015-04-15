@@ -92,7 +92,7 @@ sed -i $ETC_SCHROOT_SPINDLE/nssdatabases -e "/^group$/d"
 
 debootstrap \
   --include="qemu,bash-completion,augeas-tools,debootstrap,less,\
-  sudo,parted,openssh-client,e2fsprogs,dosfstools,squashfs-tools,bzip2,git,zerofree" \
+  sudo,parted,openssh-client,e2fsprogs,dosfstools,squashfs-tools,bzip2,git,zerofree,libcrypto++9" \
   wheezy "$TARGET_DIR" http://http.debian.net/debian || die "Debootstrap failed"
 rm "$TARGET_DIR/dev/shm" # required on my 10.04 for schroot to work
 
